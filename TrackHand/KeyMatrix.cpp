@@ -120,37 +120,48 @@ bool KeyMatrix::send()
 
         switch(keyCode)
         {
-            case DH_KEY_NORM:
+            case MODE_KEY_NORM:
                 mode = &normalMode_;
                 break;
-            case DH_KEY_SHIFT:
+            case MODE_KEY_SHIFT:
                 mode = &shiftMode_;
                 break;
-            case DH_KEY_NAS:
-                mode = &nasMode_;
+            case MODE_KEY_NAS:
+                // Protect the NAS-LOCK mode from the key release
+                // selecting NAS mode
+                if (currentMode_ != &naslkMode_)
+                {
+                    mode = &nasMode_;
+                }
                 break;
-            case DH_KEY_FN:
+            case MODE_KEY_NASLK:
+                mode = &naslkMode_;
+                break;
+            case MODE_KEY_FN:
                 mode = &fnMode_;
                 break;
-            case DH_KEY_MOUSE:
+            case MODE_KEY_MOUSE:
                 mode = &mouseMode_;
                 break;
-            case DH_KEY_CTRL:
+            case MOD_KEY_SHIFT:
+                modifiers |= MODIFIERKEY_SHIFT;
+                break;
+            case MOD_KEY_CTRL:
                 modifiers |= MODIFIERKEY_CTRL;
                 break;
-            case DH_KEY_ALT:
+            case MOD_KEY_ALT:
                 modifiers |= MODIFIERKEY_ALT;
                 break;
-            case DH_MOUSE_1:
+            case MOUSE_1:
                 mouseButtons[0] = 1;
                 break;
-            case DH_MOUSE_1_1:
+            case MOUSE_1_1:
                 mouseButtons[0] = 2;
                 break;
-            case DH_MOUSE_2:
+            case MOUSE_2:
                 mouseButtons[1] = 1;
                 break;
-            case DH_MOUSE_3:
+            case MOUSE_3:
                 mouseButtons[2] = 1;
                 break;
         }
@@ -281,6 +292,7 @@ KeyMatrix::KeyMatrix()
     normalMode_(false, normalKeyMap, 31),
     shiftMode_(false, shiftKeyMap, 24),
     nasMode_(false, normalKeyMap, 30),
+    naslkMode_(true, normalKeyMap, 30),
     fnMode_(false, normalKeyMap, 29),
     mouseMode_(true, mouseKeyMap, 28),
     currentMode_(normalMode_.set(NULL))

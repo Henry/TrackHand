@@ -22,39 +22,24 @@
 ///  Description:
 // -----------------------------------------------------------------------------
 
-// | Switch | Thumb   | Column/Row/index |
-// |--------+---------+------------------|
-// |      1 | Knuckle | 0 0 0            |
-// |      2 | Nail    | 1 0 1            |
-// |      3 | Down    | 0 1 2            |
-// |      4 | DOWN    | 1 1 3            |
-// |      5 | Pad     | 0 3 6            |
-// |      6 | Up      | 1 2 5            |
+// Mode key codes
+const uint16_t MODE_KEY_NORM  = 0xf0;
+const uint16_t MODE_KEY_NAS   = 0xf1;
+const uint16_t MODE_KEY_NASLK = 0xf2;
+const uint16_t MODE_KEY_FN    = 0xf3;
+const uint16_t MODE_KEY_SHIFT = 0xf4;
+const uint16_t MODE_KEY_MOUSE = 0xf5;
 
-// | Finger | D       | N       | S       | E       | W       |
-// |--------+---------+---------+---------+---------+---------|
-// |      1 | 0 5  10 | 1 4  9  | 0 7  14 | 1 5  11 | 0 4  8  |
-// |      2 | 0 11 22 | 1 9  19 | 1 7  15 | 1 11 23 | 0 9  18 |
-// |      3 | 0 12 24 | 1 13 27 | 0 10 20 | 1 12 25 | 0 13 26 |
-// |      4 | 0 6  12 | 1 8  17 | 1 10 21 | 1 6  13 | 0 8  16 |
-
-// Mode and modifier key codes
-const uint16_t DH_KEY_NORM  = 0xf0;
-const uint16_t DH_KEY_NAS   = 0xf1;
-const uint16_t DH_KEY_NASLK = 0xf2;
-const uint16_t DH_KEY_FN    = 0xf3;
-const uint16_t DH_KEY_SHIFT = 0xf4;
-const uint16_t DH_KEY_MOUSE = 0xf5;
-const uint16_t DH_KEY_CTRL  = 0xf6;
-const uint16_t DH_KEY_ALT   = 0xf7;
-
-// ***HGW need to add a SHIFT modifier key in addition to the mode
+// Modifier key codes
+const uint16_t MOD_KEY_SHIFT  = 0xf6;
+const uint16_t MOD_KEY_CTRL   = 0xf7;
+const uint16_t MOD_KEY_ALT    = 0xf8;
 
 // Mouse button key codes
-const uint16_t DH_MOUSE_1   = 0xf8;
-const uint16_t DH_MOUSE_2   = 0xf9;
-const uint16_t DH_MOUSE_3   = 0xfa;
-const uint16_t DH_MOUSE_1_1 = 0xfb;
+const uint16_t MOUSE_1        = 0xf9;
+const uint16_t MOUSE_2        = 0xfa;
+const uint16_t MOUSE_3        = 0xfb;
+const uint16_t MOUSE_1_1      = 0xfc;
 
 // Add bit to indicate key is shifted
 #define DH_SHIFT(key) key + 0x80
@@ -62,12 +47,12 @@ const uint16_t DH_MOUSE_1_1 = 0xfb;
 const KEYCODE_TYPE normalKeyMap[KeyMatrix::nKeys] =
 {
     // Thumb cluster
-    DH_KEY_ALT,               // Knuckle
+    MOD_KEY_ALT,              // Knuckle
     KEY_BACKSPACE,            // Nail
-    DH_KEY_SHIFT,             // Down
-    DH_KEY_SHIFT,             // Down-down
+    MODE_KEY_SHIFT,           // Down
+    MODE_KEY_SHIFT,           // Down-down
     0,                        // --
-    DH_KEY_MOUSE,             // Up
+    MODE_KEY_MOUSE,           // Up
     KEY_SPACE,                // Pad
 
     0,                        // Gap
@@ -96,12 +81,12 @@ const KEYCODE_TYPE normalKeyMap[KeyMatrix::nKeys] =
 
 
     // Thumb cluster
-    DH_KEY_CTRL,              // Knuckle
+    MOD_KEY_CTRL,             // Knuckle
     KEY_TAB,                  // Nail
-    DH_KEY_NAS,               // Down
-    DH_KEY_NASLK,             // Down-down
+    MODE_KEY_NAS,             // Down
+    MODE_KEY_NASLK,           // Down-down
     0,                        // --
-    DH_KEY_NORM,              // Up
+    MODE_KEY_NORM,            // Up
     KEY_RETURN,               // Pad
 
     0,                        // Gap
@@ -132,12 +117,12 @@ const KEYCODE_TYPE normalKeyMap[KeyMatrix::nKeys] =
 const KEYCODE_TYPE shiftKeyMap[KeyMatrix::nKeys] =
 {
     // Thumb cluster
-    DH_KEY_ALT,               // Knuckle
+    MOD_KEY_ALT,              // Knuckle
     DH_SHIFT(KEY_BACKSPACE),  // Nail
-    DH_KEY_SHIFT,             // Down
-    DH_KEY_SHIFT,             // Down-down
+    MODE_KEY_SHIFT,           // Down
+    MODE_KEY_SHIFT,           // Down-down
     0,                        // --
-    DH_KEY_MOUSE,             // Up
+    MODE_KEY_MOUSE,           // Up
     DH_SHIFT(KEY_SPACE),      // Pad
 
     0,                        // Gap
@@ -162,15 +147,15 @@ const KEYCODE_TYPE shiftKeyMap[KeyMatrix::nKeys] =
     DH_SHIFT(KEY_N),          // 3 D
     DH_SHIFT(KEY_ENTER),      // 3 E
     DH_SHIFT(KEY_B),          // 3 W
-    DH_SHIFT(KEY_R),           // 3 N
+    DH_SHIFT(KEY_R),          // 3 N
 
     // Thumb cluster
-    DH_KEY_CTRL,              // Knuckle
+    MOD_KEY_CTRL,             // Knuckle
     DH_SHIFT(KEY_TAB),        // Nail
-    DH_KEY_FN,                // Down
-    DH_KEY_FN,                // Down-down
+    MODE_KEY_FN,              // Down
+    MODE_KEY_FN,              // Down-down
     0,                        // --
-    DH_KEY_NORM,              // Up
+    MODE_KEY_NORM,            // Up
     DH_SHIFT(KEY_RETURN),     // Pad
 
     0,                        // Gap
@@ -201,13 +186,13 @@ const KEYCODE_TYPE shiftKeyMap[KeyMatrix::nKeys] =
 const KEYCODE_TYPE mouseKeyMap[KeyMatrix::nKeys] =
 {
     // Thumb cluster
-    DH_KEY_ALT,               // Knuckle
-    DH_MOUSE_3,               // Nail
-    DH_MOUSE_1,               // Down
-    DH_MOUSE_1_1,             // Down-down
+    MOD_KEY_ALT,              // Knuckle
+    MOUSE_3,                  // Nail
+    MOUSE_1,                  // Down
+    MOUSE_1_1,                // Down-down
     0,                        // --
-    DH_KEY_NORM,              // Up
-    DH_MOUSE_2,               // Pad
+    MODE_KEY_NORM,            // Up
+    MOUSE_2,                  // Pad
 
     0,                        // Gap
 
@@ -231,16 +216,16 @@ const KEYCODE_TYPE mouseKeyMap[KeyMatrix::nKeys] =
     DH_SHIFT(KEY_N),          // 3 D
     DH_SHIFT(KEY_ENTER),      // 3 E
     DH_SHIFT(KEY_B),          // 3 W
-    DH_SHIFT(KEY_R),           // 3 N
+    DH_SHIFT(KEY_R),          // 3 N
 
     // Thumb cluster
-    DH_KEY_ALT,               // Knuckle
-    DH_MOUSE_3,               // Nail
-    DH_MOUSE_1,               // Down
-    DH_MOUSE_1_1,             // Down-down
+    MOD_KEY_CTRL,             // Knuckle
+    KEY_TAB,                  // Nail
+    MODE_KEY_NAS,             // Down
+    MODE_KEY_NASLK,           // Down-down
     0,                        // --
-    DH_KEY_NORM,              // Up
-    DH_MOUSE_2,               // Pad
+    MODE_KEY_NORM,            // Up
+    KEY_RETURN,               // Pad
 
     0,                        // Gap
 
