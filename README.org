@@ -1,0 +1,245 @@
+#+TITLE: *DataHand DH200-6 with USB Micro-controller and Laser Trackball*
+#+AUTHOR: nil
+#+EMAIL: no-reply
+#+OPTIONS: author:nil email:nil ^:{}
+#+LaTeX_HEADER: \usepackage[parfill]{parskip}
+#+STARTUP: hidestars odd
+
+* Aim
+  The initial aim of this project is to replace the archaic firmware in a
+  DataHand DH200-6 keyboard with an ARM-based micro-controller and USB interface
+  and use this as a test-platform for an integrated laser trackball fitted
+  closely below the finger cluster.  The trackball is intended for finger
+  control with the mouse buttons included in a special mode and mapped to the
+  thumb-cluster keys.  Once the initial aim is fulfilled the trackball hardware
+  and software could be fitted to the [[http://www.google.com/url?q=http://geekhack.org/index.php%3Ftopic%3D41422.30&sa=U&ei=3BZNVO7aKebZ7gahhoHwBQ&ved=0CBQQFjAA&usg=AFQjCNH0Grb5lPui4hwmJ46NEKVVzCrCww][DodoHand]] as an alternative to the proposed
+  TrackPoint pointing device.
+
+  The proposed layout of ball and switches is reminiscent of the excellent but
+  obsolete Logitech TrackMan Marble FX trackball which I used for 15years:
+  [[www.youtube.com/watch?v=k_sZMnmEOp4]]
+* Teensy 3
+  The [[https://www.pjrc.com/teensy/teensy31.html][Teensy-3.1]] micro-controller is used in this project.  Any of the Teensy
+  boards could be used but I wanted to play around with this latest and most
+  powerful offering from PJRC and the price is very reasonable.  The
+  installation notes are really for my own reference but they may be useful to
+  others.  I am developing software under OpenSuSE but all these tools are
+  available for other GNU/Linux distributions.
+*** Install AVR tools on OpenSuSE
+    Open /firefox/ and follow instructions on
+    + http://software.opensuse.org/package/cross-avr-gcc
+    + Use the 1-click install of /CrossToolchain:avr/
+*** Enable serial (based on notes from PJRC)
+    The udev rule file gives non-root users permission to use the Teensy device.
+    + =sudo cp 49-teensy.rules /etc/udev/rules.d/=
+    Add user to /uucp/ and /dialout/ groups
+    + =uucp:x:14:<username>=
+    + =dialout:x:16:<username>=
+*** Teensyduino (avoid)
+    Annoying Java interface to building and loading teensy applications.  This
+    is the only way supported directly by PJRC on the Teensy-3.1.  However,
+    other people are maintaining CLI support software for the Teensy-3.1:
+*** Make (use instead of Teensyduino)
+    Install the arduino libraries and make file for Teensy-3.x
+    + =git clone= https://github.com/apmorton/teensy-template
+    This repository started from the /teensy-template/ repository, so you do not
+    need this step unless you want to write code for another project.
+
+    To test simply
+    + =make=
+    + =make upload=
+    + Press the button
+*** CLI (use instead of Teensyduino)
+    Download the latest CLI app for teensy-3.1
+    + =git clone= https://github.com/texane/teensy3.git
+    + =cd teensy3/src/teensy_loader_cli=
+    + =make=
+    + =cp teensy_loader_cli ~/bin/linux=
+*** Use GNU screen or cat to listen to serial messages
+    + =screen /dev/ttyACM0=
+    + =cat /dev/ttyACM0=
+*** I2C "wire" comms library
+    This is included in this repository: /libraries/Wire/
+    + http://forum.pjrc.com/threads/21680-New-I2C-library-for-Teensy3
+    I2C is used to connect the right-hand unit to the left-hand IO-expander.
+***** Teensy-3 pins
+      + SCL: pin 19 with 4k7 pull-up resistor
+      + SDA: pin 18 with 4k7 pull-up resistor
+      To connect two teensys connect SCL to SCL and SDA to SDA with the pull-up
+      resistors.
+*** Serial Peripheral Interface (SPI) library
+    This is already included in this repository: /libraries/spi4teensy3/
+    + https://github.com/xxxajk/spi4teensy3
+*** Low-power library
+    This is included in this repository: /libraries/LowPower_Teensy3/
+    + [[https://github.com/duff2013/LowPower_Teensy3.git]]
+* Trackball using the ADNS-9800 LaserStream Gaming Sensor
+  The ADNS-9800 LaserStream Gaming Sensor is used to scan the motion of the 2
+  1/4" Pool ball.  The Kicklighter breakout board is used
+  + https://www.kickstarter.com/projects/1034145369/high-speed-laser-optical-sensor
+  + https://www.tindie.com/products/jkicklighter/adns-9800-optical-laser-sensor/
+  Initially a cue-ball was tried but the sensor could not detect the motion
+  reliably if the ball moves fast.  This may be an issue with inaccurate
+  positioning of the sensor.  A "Golden-8" ball with metallic colour is now used
+  which the sensor can follow more reliably.
+*** Teensy software for the ADNS-9800
+    Teensy interface for the ADNS-9800 used in this project is based on that
+    provided by John Kicklighter
+    + https://github.com/mrjohnk/ADNS-9800.git
+    + https://github.com/mrjohnk/Trackball2.git
+    with updates for the Teensy-3.1 from
+    + https://github.com/pepijndevos/Dwergmuis
+* DataHand DH200-6
+  The DataHand keyboard receiving this extreme makeover is a second-hand 1993
+  DH200-6 is decent condition and basically working.  All the existing
+  electronics is removed leaving just the thumb and finger switch clusters.  The
+  leds on the key map panel can also be reused.
+*** Thumb Cluster
+    The 8-pin IDC header on thumb-cluster has the following connections and
+    proposed Teensy-3.1 pin allocation
+    | Pin | Line           | Switches | Connections               | Teensy pin |
+    |-----+----------------+----------+---------------------------+------------|
+    |   1 | Vcc            |          |                           |            |
+    |   2 | XD0 (column 0) | 1 3 5    |                           |         14 |
+    |   3 | Row 0          | 1 2      | ->D1k->(D1)->D2k->R1->Vcc |          5 |
+    |   4 | XD1 (column 1) | 2 4 6    |                           |         15 |
+    |   5 | Row 1          | 3 4      | ->D3k->(D3)->D4k->R1->Vcc |          6 |
+    |   6 | Row 2          | 6        | ->D3k->R1->Vcc            |          8 |
+    |   7 | Row 3          | 5        | ->D5k->R1->Vcc            |          7 |
+    |   8 | GND            | 1-6      |                           |            |
+    + Connect 1 to Vcc
+    + Connect 8 to GND
+    + Connect columns 0 and 1 to INPUT pins each with a 4k7 pull-up to Vcc.
+    + Set rows 0-3 to HIGH
+    + Scan rows by setting each to LOW in turn
+    + Read state of each column, LOW is on.
+*** Finger Cluster
+    The 14-pin IDC header on finger-cluster has the following connections and
+    proposed Teensy-3.1 pin allocation
+    | Pin | Line           |                               Teensy pin |
+    |-----+----------------+------------------------------------------|
+    |   1 | Vcc            |                                          |
+    |   2 | XD0 (column 0) |                                       14 |
+    |   3 | Row 4          |                                        1 |
+    |   4 | XD1 (column 1) | 15 (now 16 but should be put back to 15) |
+    |   5 | Row 5          |                                        0 |
+    |   6 | Row 6          | 16 (now 15 but should be put back to 16) |
+    |   7 | Row 7          |                                        3 |
+    |   8 | Row 8          |                                       17 |
+    |   9 | Row 9          |                                        2 |
+    |  10 | Row 10         |                                       20 |
+    |  11 | Row 11         |                                       23 |
+    |  12 | Row 12         |                                       21 |
+    |  13 | Row 13         |                                       22 |
+    |  14 | GND            |                                          |
+    |     |                |                                          |
+    + Connect 1 to Vcc
+    + Connect 14 to GND
+    + Connect columns 0 and 1 to INPUT pins each with a 4k7 pull-up to Vcc.
+      (NOTE: columns 0 and 1 are the same for finger and thumb clusters)
+    + Set rows 4-14 to HIGH
+    + Scan rows by setting each to LOW in turn
+    + Read state of each column, LOW is on.
+***** Thumb and Finger Switch Indices
+      The following tables provide the column, row and combined indices for each
+      of the thumb and finger switches:
+      | Thumb Switch | Column/Row/index |
+      |--------------+------------------|
+      | Knuckle      | 0 0 0            |
+      | Nail         | 1 0 1            |
+      | Down         | 0 1 2            |
+      | DOWN         | 1 1 3            |
+      | Pad          | 0 3 6            |
+      | Up           | 1 2 5            |
+
+      | Finger | Down    | North   | South   | East    | West    |
+      |--------+---------+---------+---------+---------+---------|
+      |      1 | 0 5  10 | 1 4  9  | 0 7  14 | 1 5  11 | 0 4  8  |
+      |      2 | 0 11 22 | 1 9  19 | 1 7  15 | 1 11 23 | 0 9  18 |
+      |      3 | 0 12 24 | 1 13 27 | 0 10 20 | 1 12 25 | 0 13 26 |
+      |      4 | 0 6  12 | 1 8  17 | 1 10 21 | 1 6  13 | 0 8  16 |
+*** Trackball
+    The ADNS-9800 LaserStream Gaming Sensor Kicklighter breakout board connects
+    to the Teensy 3 on the SPI interface using 4 pins + 1 pin for interupt:
+    | Pin | ADNS | Teensy | Description     | Teensy pin |
+    |-----+------+--------+-----------------+------------|
+    |   1 | MI   | MISO   | Data input      |         12 |
+    |   2 | VI   | Vcc    | 3.3V            |            |
+    |   3 | SC   | SCK    | Clock           |         13 |
+    |   4 | AG   | GND    | Ground          |            |
+    |   5 | MO   | MOSI   | Data output     |         11 |
+    |   6 | DG   | GND    | Ground          |            |
+    |   7 | SS   | SS     | Select device   |         10 |
+    |   8 | MOT  | --     | Motion interupt |         9  |
+*** LEDs
+    The LEDs on the key map panel on the DataHand case are reused with the
+    following pin allocation on the Teensy-3.1:
+    | LED               | Teensy pin |
+    |-------------------+------------|
+    | Shift             |         24 |
+    | Caps Lock         |         25 |
+    | --                |         26 |
+    | --                |         27 |
+    | Cursor/mouse mode |         28 |
+    | Function mode     |         29 |
+    | NAP mode          |         30 |
+    | Normal mode       |         31 |
+    | --                |         32 |
+    | --                |         33 |
+    + Note: LOW is on
+*** Teensy-3 pin allocation
+    Pin requirements:
+    | Purpose                               | #pins |
+    |---------------------------------------+-------|
+    | I2C (comms between teensys)           |     2 |
+    | SPI (comms with trackball) + interupt |     5 |
+    | Key matrix column inputs              |     2 |
+    | Thumb row outputs                     |     4 |
+    | Finger row outputs                    |    10 |
+    | Mode and modifier indicator LEDs      |     6 |
+    | Wake-up GPIO pin                      |     1 |
+    |---------------------------------------+-------|
+    | Total                                 |    30 |
+* Low-power sleep mode
+  To save power, IR LEDs and in particular the laser sensor it is important to
+  include a sleep mode.  Sleep functionality in the ARM-based Teensy 3.1 is
+  completely different to the AVR-based Teensy 2 and a special library is
+  needed:
+  + [[https://github.com/duff2013/LowPower_Teensy3.git]]
+  There are various modes of operation supported from reduced clock low-power
+  modes to interruptable deep-sleep and hibernate modes.  The problem with the
+  reduced clock modes is that the IR LEDs will still be powered although it
+  would be possible to reduce the scanning frequency of the matrix.  The
+  interruptable deep-sleep mode looks most appropriate but a pin would need to
+  powered to interrupt the sleep which is not possible using the optical
+  switched of the DataHand which would all be off during sleep.  The easiest
+  solution is to provide a dedicated wake-up push-button switch attached to a
+  dedicated wake-up pin on the Teensy 3.1.  Note that only a subset of the pins
+  may be used for this purpose:
+  |     | GPIO pin |
+  |-----+----------|
+  |  1. | PIN_2    |
+  |  2. | PIN_4    |
+  |  3. | PIN_6    |
+  |  4. | PIN_7    |
+  |  5. | PIN_9    |
+  |  6. | PIN_10   |
+  |  7. | PIN_11   |
+  |  8. | PIN_13   |
+  |  9. | PIN_16   |
+  | 10. | PIN_21   |
+  | 11. | PIN_22   |
+  | 12. | PIN_26   |
+  | 13. | PIN_30   |
+  | 14. | PIN_33   |
+  A push-button switch is attached to pin 33 for wake-up which works fine but it
+  would be good to use the normal keys.  Given that the trackball laser is
+  switched-off during sleep it is not possible to wake by moving the ball.  An
+  alternative would be to use one of the rest modes of the ADNS9800 for laser
+  saving and still support wake-up by moving the ball but this would require the
+  SPI to be running, i.e. the Teensy 3.1 in sleep rather than deep-sleep mode
+  which would be OK if it wired directly to the computer rather than wireless
+  and battery powered.
+* Compile and Upload
+  + Compile only: =make PROGRAM=TrackHand=
+  + Compile and upload: =make PROGRAM=TrackHand load=
