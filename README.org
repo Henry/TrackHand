@@ -37,8 +37,8 @@
     + =dialout:x:16:<username>=
 *** Teensyduino (avoid)
     Annoying Java interface to building and loading teensy applications.  This
-    is the only way supported directly by PJRC on the Teensy-3.1.  However,
-    other people are maintaining CLI support software for the Teensy-3.1:
+    is the only method supported directly by PJRC on the Teensy-3.1.  However,
+    other people are maintaining CLI support software for the Teensy-3.1.
 *** Make (use instead of Teensyduino)
     Install the arduino libraries and make file for Teensy-3.x
     + =git clone= https://github.com/apmorton/teensy-template
@@ -55,7 +55,10 @@
     + =cd teensy3/src/teensy_loader_cli=
     + =make=
     + =cp teensy_loader_cli ~/bin/linux=
-*** Use GNU screen or cat to listen to serial messages
+*** Using GNU screen or cat to listen to serial messages
+    On OpenSuSE the USB serial device =/dev/ttyACM0= is created following
+    =Serial.begin()= and may be interrogated using =screen= or just plain old
+    =cat=:
     + =screen /dev/ttyACM0=
     + =cat /dev/ttyACM0=
 *** I2C "wire" comms library
