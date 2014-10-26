@@ -1,0 +1,2 @@
+pngtopnm $1.png > $1.pnm
+pnmtops -scale 0.1483 $1.pnm > $1.ps
