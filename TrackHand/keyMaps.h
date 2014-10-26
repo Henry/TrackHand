@@ -96,37 +96,37 @@ const KEYCODE_TYPE normalKeyMap[KeyMatrix::nKeys] =
 
 
     // Thumb cluster
-    DH_KEY_ALT,               // Knuckle
-    KEY_BACKSPACE,            // Nail
-    DH_KEY_SHIFT,             // Down
-    DH_KEY_SHIFT,             // Down-down
+    DH_KEY_CTRL,              // Knuckle
+    KEY_TAB,                  // Nail
+    DH_KEY_NAS,               // Down
+    DH_KEY_NASLK,             // Down-down
     0,                        // --
-    DH_KEY_MOUSE,             // Up
-    KEY_SPACE,                // Pad
+    DH_KEY_NORM,              // Up
+    KEY_RETURN,               // Pad
 
     0,                        // Gap
 
     // Finger cluster
-    KEY_D,                    // 1 W
-    KEY_G,                    // 1 N
-    KEY_H,                    // 1 D
-    KEY_F,                    // 1 E
-    KEY_S,                    // 4 D
-    KEY_MINUS,                // 4 E
-    KEY_W,                    // 2 S
-    KEY_M,                    // 1 S
-    KEY_SLASH,                // 4 W
-    KEY_L,                    // 4 N
-    DH_SHIFT(KEY_9),          // 2 W
-    KEY_C,                    // 2 N
-    KEY_Z,                    // 4 S
-    KEY_V,                    // 3 S
-    KEY_T,                    // 2 D
-    DH_SHIFT(KEY_0),          // 2 E
-    KEY_N,                    // 3 D
-    KEY_ENTER,                // 3 E
-    KEY_B,                    // 3 W
-    KEY_R                     // 3 N
+    KEY_Y,                    // 1 W
+    KEY_P,                    // 1 N
+    KEY_U,                    // 1 D
+    KEY_I,                    // 1 E
+    KEY_A,                    // 4 D
+    KEY_TILDE,                // 4 E
+    KEY_J,                    // 2 S
+    KEY_K,                    // 1 S
+    KEY_DELETE,               // 4 W
+    KEY_QUOTE,                // 4 N
+    DH_SHIFT(KEY_1),          // 2 W
+    KEY_PERIOD,               // 2 N
+    KEY_SEMICOLON,            // 4 S
+    KEY_Q,                    // 3 S
+    KEY_E,                    // 2 D
+    DH_SHIFT(KEY_2),          // 2 E
+    KEY_O,                    // 3 D
+    KEY_X,                    // 3 E
+    KEY_ESC,                  // 3 W
+    KEY_COMMA                 // 3 N
 };
 
 const KEYCODE_TYPE shiftKeyMap[KeyMatrix::nKeys] =
@@ -165,37 +165,37 @@ const KEYCODE_TYPE shiftKeyMap[KeyMatrix::nKeys] =
     DH_SHIFT(KEY_R),           // 3 N
 
     // Thumb cluster
-    DH_KEY_ALT,               // Knuckle
-    DH_SHIFT(KEY_BACKSPACE),  // Nail
-    DH_KEY_SHIFT,             // Down
-    DH_KEY_SHIFT,             // Down-down
+    DH_KEY_CTRL,              // Knuckle
+    DH_SHIFT(KEY_TAB),        // Nail
+    DH_KEY_FN,                // Down
+    DH_KEY_FN,                // Down-down
     0,                        // --
-    DH_KEY_MOUSE,             // Up
-    DH_SHIFT(KEY_SPACE),      // Pad
+    DH_KEY_NORM,              // Up
+    DH_SHIFT(KEY_RETURN),     // Pad
 
     0,                        // Gap
 
     // Finger cluster
-    DH_SHIFT(KEY_D),          // 1 W
-    DH_SHIFT(KEY_G),          // 1 N
-    DH_SHIFT(KEY_H),          // 1 D
-    DH_SHIFT(KEY_F),          // 1 E
-    DH_SHIFT(KEY_S),          // 4 D
-    DH_SHIFT(KEY_MINUS),      // 4 E
-    DH_SHIFT(KEY_W),          // 2 S
-    DH_SHIFT(KEY_M),          // 1 S
-    DH_SHIFT(KEY_SLASH),      // 4 W
-    DH_SHIFT(KEY_L),          // 4 N
-    DH_SHIFT(KEY_LEFT_BRACE), // 2 W
-    DH_SHIFT(KEY_C),          // 2 N
-    DH_SHIFT(KEY_Z),          // 4 S
-    DH_SHIFT(KEY_V),          // 3 S
-    DH_SHIFT(KEY_T),          // 2 D
-    DH_SHIFT(KEY_RIGHT_BRACE),// 2 E
-    DH_SHIFT(KEY_N),          // 3 D
-    DH_SHIFT(KEY_ENTER),      // 3 E
-    DH_SHIFT(KEY_B),          // 3 W
-    DH_SHIFT(KEY_R)           // 3 N
+    DH_SHIFT(KEY_Y),          // 1 W
+    DH_SHIFT(KEY_P),          // 1 N
+    DH_SHIFT(KEY_U),          // 1 D
+    DH_SHIFT(KEY_I),          // 1 E
+    DH_SHIFT(KEY_A),          // 4 D
+    DH_SHIFT(KEY_TILDE),      // 4 E
+    DH_SHIFT(KEY_J),          // 2 S
+    DH_SHIFT(KEY_K),          // 1 S
+    KEY_DELETE,               // 4 W
+    DH_SHIFT(KEY_QUOTE),      // 4 N
+    DH_SHIFT(KEY_1),          // 2 W
+    DH_SHIFT(KEY_PERIOD),     // 2 N
+    DH_SHIFT(KEY_SEMICOLON),  // 4 S
+    DH_SHIFT(KEY_Q),          // 3 S
+    DH_SHIFT(KEY_E),          // 2 D
+    DH_SHIFT(KEY_2),          // 2 E
+    DH_SHIFT(KEY_O),          // 3 D
+    DH_SHIFT(KEY_X),          // 3 E
+    KEY_ESC,                  // 3 W
+    DH_SHIFT(KEY_COMMA)       // 3 N
 };
 
 const KEYCODE_TYPE mouseKeyMap[KeyMatrix::nKeys] =
