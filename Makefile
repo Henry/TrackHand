@@ -67,7 +67,7 @@ CPPFLAGS = -Wall -g -Os -mcpu=cortex-m4 -mthumb -nostdlib -MMD $(OPTIONS) \
     -DF_CPU=$(TEENSY_CORE_SPEED) -I$(PROGRAM) -I$(COREPATH)
 
 # compiler options for C++ only
-CXXFLAGS = -std=gnu++0x -felide-constructors -fno-exceptions -fno-rtti
+CXXFLAGS = -std=gnu++0x -felide-constructors -fno-exceptions -fno-rtti -Wno-narrowing -Wno-overflow
 
 # compiler options for C only
 CFLAGS =
