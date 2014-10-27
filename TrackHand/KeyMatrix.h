@@ -75,10 +75,6 @@ class KeyMatrix
         //- Matrix scan loop delay time (ms)
         const uint16_t loopDelayTime_ = 10;
 
-        //- Delay when switching in or out of modal modes.
-        //  Avoids rapid mode switching and enable reliable mode selection (ms)
-        const uint16_t modalModeDelay_ = 200;
-
         //- Maximum number of pressed keys stored
         static const uint8_t maxPressed_ = 16;
 
@@ -91,9 +87,7 @@ class KeyMatrix
 
         Mode normalMode_;
         Mode shiftMode_;
-        Mode shiftLkMode_;
         Mode nasMode_;
-        Mode nasLkMode_;
         Mode fnMode_;
         Mode mouseMode_;
 
@@ -106,9 +100,15 @@ class KeyMatrix
         //- Pressed keys
         uint8_t pressedKeys_[maxPressed_];
 
+        uint8_t modeKeyPrev_ = 0;
+
         //- Key codes sent from previous call
         //  Used to avoid sending the same key codes repeatedly
         KEYCODE_TYPE keyboardKeysPrev_[maxSend_] = {0, 0, 0, 0, 0, 0};
+
+        //- Modifiers sent from previous call
+        //  Used to avoid sending the same key codes repeatedly
+        uint8_t modifiersPrev_ = 0;
 
         //- Mouse buttons from previous call
         uint8_t mouseButtonsPrev_[3] = {0, 0, 0};

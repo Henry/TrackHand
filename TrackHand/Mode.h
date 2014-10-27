@@ -35,7 +35,7 @@
 class Mode
 {
     //- Is the mode modal (sticky)
-    const bool modal_;
+    bool modal_;
 
     //- Key-codes for mode
     const KEYCODE_TYPE *keyCodes_;
@@ -56,6 +56,16 @@ public:
     bool modal() const
     {
         return modal_;
+    }
+
+    void lock()
+    {
+        modal_ = true;
+    }
+
+    void unlock()
+    {
+        modal_ = false;
     }
 
     KEYCODE_TYPE keyCode(const uint8_t key) const;

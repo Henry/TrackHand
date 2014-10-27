@@ -29,12 +29,6 @@ void KeyMatrix::set(const Mode& mode)
 {
     if (currentMode_ != &mode)
     {
-        if (mode.modal() || currentMode_->modal())
-        {
-            // Add delay when switching in or out of modal modes
-            // to avoid rapid mode switching and enable reliable mode selection
-            delay(modalModeDelay_);
-        }
         currentMode_ = mode.set(currentMode_);
     }
 }
@@ -114,6 +108,8 @@ bool KeyMatrix::send()
     // Mouse buttons
     uint8_t mouseButtons[3] = {0, 0, 0};
 
+    bool modeChanged = true;
+
     // Scan for mode and modifiers
     for (uint8_t keyi=0; keyi<nPressed_; keyi++)
     {
@@ -122,39 +118,42 @@ bool KeyMatrix::send()
 
         if (modeKey(keyCode))
         {
+            if (pressedKeys_[keyi] == modeKeyPrev_)
+            {
+                modeChanged = false;
+                continue;
+            }
+
+            // Set newMode if mode-key pressed
+            const Mode* newMode = NULL;
+
             switch(keyCode)
             {
                 case modeKeyNorm_:
-                    mode = &normalMode_;
+                    newMode = &normalMode_;
                     break;
                 case modeKeyShift_:
-                    // Protect the shift-lock mode from the key release
-                    // selecting shift mode
-                    if (currentMode_ != &shiftLkMode_)
-                    {
-                        mode = &shiftMode_;
-                    }
+                    newMode = &shiftMode_;
+                    shiftMode_.unlock();
                     break;
                 case modeKeyShiftLk_:
-                    mode = &shiftLkMode_;
+                    shiftMode_.lock();
                     break;
                 case modeKeyNas_:
-                    // Protect the NAS-lock mode from the key release
-                    // selecting NAS mode
-                    if (currentMode_ != &nasLkMode_)
-                    {
-                        mode = &nasMode_;
-                    }
+                    newMode = &nasMode_;
+                    nasMode_.unlock();
                     break;
                 case modeKeyNasLk_:
-                    mode = &nasLkMode_;
+                    nasMode_.lock();
                     break;
                 case modeKeyFn_:
-                    mode = &fnMode_;
+                    newMode = &fnMode_;
                     break;
                 case modeKeyMouse_:
-                    mode = &mouseMode_;
+                    newMode = &mouseMode_;
                     break;
+
+
                 case modKeyShift_:
                     modifiers |= MODIFIERKEY_SHIFT;
                     break;
@@ -164,6 +163,8 @@ bool KeyMatrix::send()
                 case modKeyAlt_:
                     modifiers |= MODIFIERKEY_ALT;
                     break;
+
+
                 case mouse1_:
                     mouseButtons[0] = 1;
                     break;
@@ -178,17 +179,31 @@ bool KeyMatrix::send()
                     mouseButtons[2] = 1;
                     break;
             }
+
+            if (newMode)
+            {
+                mode = newMode;
+                modeKeyPrev_ = pressedKeys_[keyi];
+            }
         }
     }
 
-    if (mode)
+
+    if (modeChanged)
     {
-        set(*mode);
-    }
-    // If the current mode is not modal reset to normal mode
-    else if (!currentMode_->modal())
-    {
-        set(normalMode_);
+        if (mode)
+        {
+            set(*mode);
+        }
+        // If the current mode is not modal reset to normal mode
+        else if (!currentMode_->modal())
+        {
+            set(normalMode_);
+        }
+        if (!mode)
+        {
+            modeKeyPrev_ = 0;
+        }
     }
 
     uint8_t nSend = 0;
@@ -250,11 +265,16 @@ bool KeyMatrix::send()
         keyboardKeysPrev_[keyi] = keyboardKeys[keyi];
     }
 
-    // Set modifiers
-    Keyboard.set_modifier(modifiers);
+    // Set modifiers if changed
+    bool modifiersChanged = false;
+    if (modifiers != modifiersPrev_)
+    {
+        Keyboard.set_modifier(modifiers);
+        modifiersPrev_ = modifiers;
+    }
 
     // Send if keys have changed
-    if (keysChanged)
+    if (keysChanged || modifiersChanged)
     {
         Keyboard.send_now();
     }
@@ -306,9 +326,7 @@ KeyMatrix::KeyMatrix()
     leftHand_(Wire, 0),
     normalMode_(false, normalKeyMap, 31),
     shiftMode_(false, shiftKeyMap, 24),
-    shiftLkMode_(true, shiftKeyMap, 24),
     nasMode_(false, normalKeyMap, 30),
-    nasLkMode_(true, normalKeyMap, 30),
     fnMode_(false, normalKeyMap, 29),
     mouseMode_(true, mouseKeyMap, 28),
     currentMode_(normalMode_.set(NULL))
