@@ -91,8 +91,9 @@ class KeyMatrix
 
         Mode normalMode_;
         Mode shiftMode_;
+        Mode shiftLkMode_;
         Mode nasMode_;
-        Mode naslkMode_;
+        Mode nasLkMode_;
         Mode fnMode_;
         Mode mouseMode_;
 

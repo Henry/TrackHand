@@ -128,18 +128,26 @@ bool KeyMatrix::send()
                     mode = &normalMode_;
                     break;
                 case modeKeyShift_:
-                    mode = &shiftMode_;
+                    // Protect the shift-lock mode from the key release
+                    // selecting shift mode
+                    if (currentMode_ != &shiftLkMode_)
+                    {
+                        mode = &shiftMode_;
+                    }
+                    break;
+                case modeKeyShiftLk_:
+                    mode = &shiftLkMode_;
                     break;
                 case modeKeyNas_:
-                    // Protect the NAS-LOCK mode from the key release
+                    // Protect the NAS-lock mode from the key release
                     // selecting NAS mode
-                    if (currentMode_ != &naslkMode_)
+                    if (currentMode_ != &nasLkMode_)
                     {
                         mode = &nasMode_;
                     }
                     break;
                 case modeKeyNasLk_:
-                    mode = &naslkMode_;
+                    mode = &nasLkMode_;
                     break;
                 case modeKeyFn_:
                     mode = &fnMode_;
@@ -298,8 +306,9 @@ KeyMatrix::KeyMatrix()
     leftHand_(Wire, 0),
     normalMode_(false, normalKeyMap, 31),
     shiftMode_(false, shiftKeyMap, 24),
+    shiftLkMode_(true, shiftKeyMap, 24),
     nasMode_(false, normalKeyMap, 30),
-    naslkMode_(true, normalKeyMap, 30),
+    nasLkMode_(true, normalKeyMap, 30),
     fnMode_(false, normalKeyMap, 29),
     mouseMode_(true, mouseKeyMap, 28),
     currentMode_(normalMode_.set(NULL))

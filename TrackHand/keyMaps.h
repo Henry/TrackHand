@@ -26,26 +26,31 @@
 #define DH_MODE(key) key + KeyMatrix::modeOffset_
 
 // Add offset to indicate key is shifted
-#define DH_SHIFT(key) key + KeyMatrix::shiftOffset_
+// #define DH_SHIFT(key) key + KeyMatrix::shiftOffset_
+inline KEYCODE_TYPE DH_SHIFT(const KEYCODE_TYPE& key)
+{
+    return key + KeyMatrix::shiftOffset_;
+}
 
 // Mode key codes
 const KEYCODE_TYPE modeKeyNorm_   = DH_MODE(0x0);
-const KEYCODE_TYPE modeKeyNas_    = DH_MODE(0x1);
-const KEYCODE_TYPE modeKeyNasLk_  = DH_MODE(0x2);
-const KEYCODE_TYPE modeKeyFn_     = DH_MODE(0x3);
-const KEYCODE_TYPE modeKeyShift_  = DH_MODE(0x4);
-const KEYCODE_TYPE modeKeyMouse_  = DH_MODE(0x5);
+const KEYCODE_TYPE modeKeyShift_  = DH_MODE(0x1);
+const KEYCODE_TYPE modeKeyShiftLk_= DH_MODE(0x2);
+const KEYCODE_TYPE modeKeyNas_    = DH_MODE(0x3);
+const KEYCODE_TYPE modeKeyNasLk_  = DH_MODE(0x4);
+const KEYCODE_TYPE modeKeyFn_     = DH_MODE(0x5);
+const KEYCODE_TYPE modeKeyMouse_  = DH_MODE(0x6);
 
 // Modifier key codes
-const KEYCODE_TYPE modKeyShift_   = DH_MODE(0x6);
-const KEYCODE_TYPE modKeyCtrl_    = DH_MODE(0x7);
-const KEYCODE_TYPE modKeyAlt_     = DH_MODE(0x8);
+const KEYCODE_TYPE modKeyShift_   = DH_MODE(0x7);
+const KEYCODE_TYPE modKeyCtrl_    = DH_MODE(0x8);
+const KEYCODE_TYPE modKeyAlt_     = DH_MODE(0x9);
 
 // Mouse button key codes
-const KEYCODE_TYPE mouse1_        = DH_MODE(0x9);
-const KEYCODE_TYPE mouse2_        = DH_MODE(0xa);
-const KEYCODE_TYPE mouse3_        = DH_MODE(0xb);
-const KEYCODE_TYPE mouse1_1_      = DH_MODE(0xc);
+const KEYCODE_TYPE mouse1_        = DH_MODE(0xa);
+const KEYCODE_TYPE mouse2_        = DH_MODE(0xb);
+const KEYCODE_TYPE mouse3_        = DH_MODE(0xc);
+const KEYCODE_TYPE mouse1_1_      = DH_MODE(0xd);
 
 const KEYCODE_TYPE normalKeyMap[KeyMatrix::nKeys] =
 {
@@ -53,7 +58,7 @@ const KEYCODE_TYPE normalKeyMap[KeyMatrix::nKeys] =
     modKeyAlt_,               // Knuckle
     KEY_BACKSPACE,            // Nail
     modeKeyShift_,            // Down
-    modeKeyShift_,            // Down-down
+    modeKeyShiftLk_,          // Down-down
     0,                        // --
     modeKeyMouse_,            // Up
     KEY_SPACE,                // Pad
@@ -123,7 +128,7 @@ const KEYCODE_TYPE shiftKeyMap[KeyMatrix::nKeys] =
     modKeyAlt_,               // Knuckle
     DH_SHIFT(KEY_BACKSPACE),  // Nail
     modeKeyShift_,            // Down
-    modeKeyShift_,            // Down-down
+    modeKeyShiftLk_,          // Down-down
     0,                        // --
     modeKeyMouse_,            // Up
     DH_SHIFT(KEY_SPACE),      // Pad
