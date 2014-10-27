@@ -109,7 +109,7 @@ bool KeyMatrix::send()
     uint8_t mouseButtons[3] = {0, 0, 0};
 
     // Keep track of the mode key being held on
-    // to avoid switching if the mode is modal
+    // to avoid switching if the mode is locked
     bool modeKeyReleased = true;
 
     // Scan for mode and modifiers
@@ -194,9 +194,9 @@ bool KeyMatrix::send()
         {
             set(*mode);
         }
-        else if (!currentMode_->modal())
+        else if (!currentMode_->locked())
         {
-            // If the current mode is not modal reset to normal mode
+            // If the current mode is not locked reset to normal mode
             set(normalMode_);
         }
 

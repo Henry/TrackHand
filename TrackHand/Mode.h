@@ -21,7 +21,7 @@
 /// Title: Keyboard mode
 ///  Description:
 //    Stores details of a keyboard mode including the key-code, map,
-//    the indicator LED and if it is modal i.e. stays in this mode after the
+//    the indicator LED and if it is locked i.e. stays in this mode after the
 //    corresponding mode-key is released.
 // -----------------------------------------------------------------------------
 
@@ -34,8 +34,8 @@
 
 class Mode
 {
-    //- Is the mode modal (sticky)
-    bool modal_;
+    //- Is the mode locked (sticky)
+    bool locked_;
 
     //- Key-codes for mode
     const KEYCODE_TYPE *keyCodes_;
@@ -46,28 +46,33 @@ class Mode
 
 public:
 
+    //- Construct given mode type, key map and indicator LED pin
     Mode
     (
-        const bool modal,
+        const bool locked,
         const KEYCODE_TYPE keyCodes[],
         const uint8_t ledPin
     );
 
-    bool modal() const
+    //- Return the locked state of this mode
+    bool locked() const
     {
-        return modal_;
+        return locked_;
     }
 
+    //- Lock the mode, i.e. change to locked
     void lock()
     {
-        modal_ = true;
+        locked_ = true;
     }
 
+    //- Unlock the mode
     void unlock()
     {
-        modal_ = false;
+        locked_ = false;
     }
 
+    //- Return the key-code for the given key
     KEYCODE_TYPE keyCode(const uint8_t key) const;
 
     //- Sleep to save power and the laser

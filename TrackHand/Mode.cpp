@@ -27,12 +27,12 @@
 
 Mode::Mode
 (
-    const bool modal,
+    const bool locked,
     const KEYCODE_TYPE keyCodes[],
     const uint8_t ledPin
 )
 :
-    modal_(modal),
+    locked_(locked),
     keyCodes_(keyCodes),
     led_(ledPin)
 {}
