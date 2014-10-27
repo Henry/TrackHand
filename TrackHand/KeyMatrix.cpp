@@ -108,7 +108,9 @@ bool KeyMatrix::send()
     // Mouse buttons
     uint8_t mouseButtons[3] = {0, 0, 0};
 
-    bool modeChanged = true;
+    // Keep track of the mode key being held on
+    // to avoid switching if the mode is modal
+    bool modeKeyReleased = true;
 
     // Scan for mode and modifiers
     for (uint8_t keyi=0; keyi<nPressed_; keyi++)
@@ -118,41 +120,39 @@ bool KeyMatrix::send()
 
         if (modeKey(keyCode))
         {
+            // Check if the mode key is being held on
+            // and if so do not check for mode change
             if (pressedKeys_[keyi] == modeKeyPrev_)
             {
-                modeChanged = false;
+                modeKeyReleased = false;
                 continue;
             }
-
-            // Set newMode if mode-key pressed
-            const Mode* newMode = NULL;
 
             switch(keyCode)
             {
                 case modeKeyNorm_:
-                    newMode = &normalMode_;
+                    mode = &normalMode_;
                     break;
                 case modeKeyShift_:
-                    newMode = &shiftMode_;
+                    mode = &shiftMode_;
                     shiftMode_.unlock();
                     break;
                 case modeKeyShiftLk_:
                     shiftMode_.lock();
                     break;
                 case modeKeyNas_:
-                    newMode = &nasMode_;
+                    mode = &nasMode_;
                     nasMode_.unlock();
                     break;
                 case modeKeyNasLk_:
                     nasMode_.lock();
                     break;
                 case modeKeyFn_:
-                    newMode = &fnMode_;
+                    mode = &fnMode_;
                     break;
                 case modeKeyMouse_:
-                    newMode = &mouseMode_;
+                    mode = &mouseMode_;
                     break;
-
 
                 case modKeyShift_:
                     modifiers |= MODIFIERKEY_SHIFT;
@@ -163,7 +163,6 @@ bool KeyMatrix::send()
                 case modKeyAlt_:
                     modifiers |= MODIFIERKEY_ALT;
                     break;
-
 
                 case mouse1_:
                     mouseButtons[0] = 1;
@@ -180,26 +179,28 @@ bool KeyMatrix::send()
                     break;
             }
 
-            if (newMode)
+            // If mode set store the corresponding pressed key
+            if (mode)
             {
-                mode = newMode;
                 modeKeyPrev_ = pressedKeys_[keyi];
             }
         }
     }
 
-
-    if (modeChanged)
+    // Only reset mode if the mode key has been released
+    if (modeKeyReleased)
     {
         if (mode)
         {
             set(*mode);
         }
-        // If the current mode is not modal reset to normal mode
         else if (!currentMode_->modal())
         {
+            // If the current mode is not modal reset to normal mode
             set(normalMode_);
         }
+
+        // If no mode key pressed reset the previous mode key
         if (!mode)
         {
             modeKeyPrev_ = 0;
