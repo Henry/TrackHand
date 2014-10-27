@@ -31,7 +31,9 @@ void KeyMatrix::set(const Mode& mode)
     {
         if (mode.modal() || currentMode_->modal())
         {
-            delay(200);
+            // Add delay when switching in or out of modal modes
+            // to avoid rapid mode switching and enable reliable mode selection
+            delay(modalModeDelay_);
         }
         currentMode_ = mode.set(currentMode_);
     }
@@ -118,52 +120,56 @@ bool KeyMatrix::send()
         // Lookup key-code for current mode
         KEYCODE_TYPE keyCode = currentMode_->keyCode(pressedKeys_[keyi]);
 
-        switch(keyCode)
+        if (modeKey(keyCode))
         {
-            case MODE_KEY_NORM:
-                mode = &normalMode_;
-                break;
-            case MODE_KEY_SHIFT:
-                mode = &shiftMode_;
-                break;
-            case MODE_KEY_NAS:
-                // Protect the NAS-LOCK mode from the key release
-                // selecting NAS mode
-                if (currentMode_ != &naslkMode_)
-                {
-                    mode = &nasMode_;
-                }
-                break;
-            case MODE_KEY_NASLK:
-                mode = &naslkMode_;
-                break;
-            case MODE_KEY_FN:
-                mode = &fnMode_;
-                break;
-            case MODE_KEY_MOUSE:
-                mode = &mouseMode_;
-                break;
-            case MOD_KEY_SHIFT:
-                modifiers |= MODIFIERKEY_SHIFT;
-                break;
-            case MOD_KEY_CTRL:
-                modifiers |= MODIFIERKEY_CTRL;
-                break;
-            case MOD_KEY_ALT:
-                modifiers |= MODIFIERKEY_ALT;
-                break;
-            case MOUSE_1:
-                mouseButtons[0] = 1;
-                break;
-            case MOUSE_1_1:
-                mouseButtons[0] = 2;
-                break;
-            case MOUSE_2:
-                mouseButtons[1] = 1;
-                break;
-            case MOUSE_3:
-                mouseButtons[2] = 1;
-                break;
+            switch(keyCode)
+            {
+                case modeKeyNorm_:
+                    mode = &normalMode_;
+                    break;
+                case modeKeyShift_:
+                    mode = &shiftMode_;
+                    break;
+                case modeKeyNas_:
+                    // Protect the NAS-LOCK mode from the key release
+                    // selecting NAS mode
+                    if (currentMode_ != &naslkMode_)
+                    {
+                        mode = &nasMode_;
+                    }
+                    break;
+                case modeKeyNasLk_:
+                    mode = &naslkMode_;
+                    break;
+                case modeKeyFn_:
+                    mode = &fnMode_;
+                    break;
+                case modeKeyMouse_:
+                    mode = &mouseMode_;
+                    break;
+                case modKeyShift_:
+                    modifiers |= MODIFIERKEY_SHIFT;
+                    break;
+                case modKeyCtrl_:
+                    modifiers |= MODIFIERKEY_CTRL;
+                    break;
+                case modKeyAlt_:
+                    modifiers |= MODIFIERKEY_ALT;
+                    break;
+                case mouse1_:
+                    mouseButtons[0] = 1;
+                    break;
+                case mouse1_1_:
+                    // Double-click
+                    mouseButtons[0] = 2;
+                    break;
+                case mouse2_:
+                    mouseButtons[1] = 1;
+                    break;
+                case mouse3_:
+                    mouseButtons[2] = 1;
+                    break;
+            }
         }
     }
 
@@ -187,25 +193,26 @@ bool KeyMatrix::send()
         // Lookup key-code for current mode
         KEYCODE_TYPE keyCode = currentMode_->keyCode(pressedKeys_[keyi]);
 
-        // Special keys already handled
-        if (keyCode >= 0xf0) continue;
+        // Mode and modifier keys already handled
+        if (modeKey(keyCode)) continue;
 
-        // High bit set for shifted keys
-        if ((keyCode & (1<<7)))
+        // Check for shifted keys
+        if (shiftedKey(keyCode))
         {
             shiftedKeys = true;
+
+            // Remove shift-bit
+            keyCode &= ~shiftOffset_;
         }
         else
         {
             unshiftedKeys = true;
         }
 
-        // Zero high bit
-        keyCode &= 0x7f;
-
         // USB supports maxSend_ (6) keys per send, ignore any more
         if (nSend >= maxSend_) break;
 
+        // Add current key code to the set for sending
         keyboardKeys[nSend++] = keyCode;
     }
 

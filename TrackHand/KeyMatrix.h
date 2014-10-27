@@ -75,6 +75,10 @@ class KeyMatrix
         //- Matrix scan loop delay time (ms)
         const uint16_t loopDelayTime_ = 10;
 
+        //- Delay when switching in or out of modal modes.
+        //  Avoids rapid mode switching and enable reliable mode selection (ms)
+        const uint16_t modalModeDelay_ = 200;
+
         //- Maximum number of pressed keys stored
         static const uint8_t maxPressed_ = 16;
 
@@ -123,6 +127,16 @@ class KeyMatrix
             return nRows_*nColumns_ + row*nColumns_ + col;
         }
 
+        inline uint8_t modeKey(const uint8_t keyCode)
+        {
+            return keyCode >= modeOffset_;
+        }
+
+        inline uint8_t shiftedKey(const uint8_t keyCode)
+        {
+            return keyCode >= shiftOffset_;
+        }
+
         void debugKey(const char* hand, const uint8_t row, const uint8_t col);
 
         //- Scan the matrix
@@ -133,6 +147,9 @@ class KeyMatrix
 
 
 public:
+
+    static const uint8_t modeOffset_ = 0xf0;
+    static const uint8_t shiftOffset_ = 0x80;
 
     //- Number of keys in matrix
     static const uint8_t nKeys = 2*nColumns_*nRows_;
