@@ -4,6 +4,9 @@
 # Dependency files
 *.d
 
+# Autosaves
+*~
+
 # Ignore the entire build directory
 build
 

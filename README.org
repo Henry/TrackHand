@@ -185,7 +185,7 @@
     | --                |         27 |
     | Cursor/mouse mode |         28 |
     | Function mode     |         29 |
-    | NAP mode          |         30 |
+    | NAS mode          |         30 |
     | Normal mode       |         31 |
     | --                |         32 |
     | --                |         33 |

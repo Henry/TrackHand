@@ -331,7 +331,7 @@ KeyMatrix::KeyMatrix()
     leftHand_(Wire, 0),
     normalMode_(false, normalKeyMap, 31),
     shiftMode_(false, shiftKeyMap, 24),
-    nasMode_(false, normalKeyMap, 30),
+    nasMode_(false, nasKeyMap, 30),
     fnMode_(true, functionKeyMap, 29),
     mouseMode_(true, functionKeyMap, 28),
     currentMode_(normalMode_.set(NULL))
