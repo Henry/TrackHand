@@ -128,30 +128,32 @@ bool KeyMatrix::send()
                 continue;
             }
 
+            const Mode* newMode = NULL;
+
             switch(keyCode)
             {
                 case modeKeyNorm_:
-                    mode = &normalMode_;
+                    newMode = &normalMode_;
                     break;
                 case modeKeyShift_:
-                    mode = &shiftMode_;
+                    newMode = &shiftMode_;
                     shiftMode_.unlock();
                     break;
                 case modeKeyShiftLk_:
                     shiftMode_.lock();
                     break;
                 case modeKeyNas_:
-                    mode = &nasMode_;
+                    newMode = &nasMode_;
                     nasMode_.unlock();
                     break;
                 case modeKeyNasLk_:
                     nasMode_.lock();
                     break;
                 case modeKeyFn_:
-                    mode = &fnMode_;
+                    newMode = &fnMode_;
                     break;
                 case modeKeyMouse_:
-                    mode = &mouseMode_;
+                    newMode = &mouseMode_;
                     break;
 
                 case modKeyShift_:
@@ -180,8 +182,9 @@ bool KeyMatrix::send()
             }
 
             // If mode set store the corresponding pressed key
-            if (mode)
+            if (newMode)
             {
+                mode = newMode;
                 modeKeyPrev_ = pressedKeys_[keyi];
             }
         }
@@ -271,6 +274,7 @@ bool KeyMatrix::send()
     if (modifiers != modifiersPrev_)
     {
         Keyboard.set_modifier(modifiers);
+        modifiersChanged = true;
         modifiersPrev_ = modifiers;
     }
 

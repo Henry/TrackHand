@@ -52,6 +52,9 @@ const KEYCODE_TYPE mouse2_        = DH_MODE(0xb);
 const KEYCODE_TYPE mouse3_        = DH_MODE(0xc);
 const KEYCODE_TYPE mouse1_1_      = DH_MODE(0xd);
 
+// Keyboard programming mode
+const KEYCODE_TYPE modeKeyPrgm_   = DH_MODE(0xe);
+
 const KEYCODE_TYPE normalKeyMap[KeyMatrix::nKeys] =
 {
     // Thumb cluster
@@ -207,24 +210,24 @@ const KEYCODE_TYPE functionKeyMap[KeyMatrix::nKeys] =
     // Finger cluster
     KEY_LEFT,                 // 1 W
     KEY_UP,                   // 1 N
-    KEY_ENTER,                // 1 D
+    KEY_F5,                   // 1 D
     KEY_RIGHT,                // 1 E
-    DH_SHIFT(KEY_S),          // 4 D
-    DH_SHIFT(KEY_MINUS),      // 4 E
+    KEY_F8,                   // 4 D
+    0,                        // 4 E
     KEY_DOWN,                 // 1 S
-    DH_SHIFT(KEY_W),          // 2 S
-    DH_SHIFT(KEY_SLASH),      // 4 W
-    DH_SHIFT(KEY_L),          // 4 N
-    DH_SHIFT(KEY_LEFT_BRACE), // 2 W
-    DH_SHIFT(KEY_C),          // 2 N
-    DH_SHIFT(KEY_V),          // 3 S
-    DH_SHIFT(KEY_Z),          // 4 S
-    DH_SHIFT(KEY_T),          // 2 D
-    DH_SHIFT(KEY_RIGHT_BRACE),// 2 E
-    DH_SHIFT(KEY_N),          // 3 D
-    DH_SHIFT(KEY_ENTER),      // 3 E
-    DH_SHIFT(KEY_B),          // 3 W
-    DH_SHIFT(KEY_R),          // 3 N
+    KEY_PAGE_DOWN,            // 2 S
+    0,                        // 4 W
+    modeKeyPrgm_,             // 4 N
+    0,                        // 2 W
+    KEY_PAGE_UP,              // 2 N
+    KEY_PAUSE,                // 3 S
+    0,                        // 4 S
+    KEY_F6,                   // 2 D
+    modKeyShift_,             // 2 E
+    KEY_F7,                   // 3 D
+    KEY_ENTER,                // 3 E
+    KEY_INSERT,               // 3 W
+    KEY_PRINTSCREEN,          // 3 N
 
     // Thumb cluster
     modKeyAlt_,               // Knuckle
@@ -240,24 +243,24 @@ const KEYCODE_TYPE functionKeyMap[KeyMatrix::nKeys] =
     // Finger cluster
     KEY_LEFT,                 // 1 W
     KEY_UP,                   // 1 N
-    KEY_ENTER,                // 1 D
+    KEY_F4,                   // 1 D
     KEY_RIGHT,                // 1 E
-    DH_SHIFT(KEY_S),          // 4 D
-    DH_SHIFT(KEY_MINUS),      // 4 E
-    DH_SHIFT(KEY_W),          // 2 S
+    KEY_F1,                   // 4 D
+    KEY_SCROLL_LOCK,          // 4 E
+    KEY_END,                  // 2 S
     KEY_DOWN,                 // 1 S
-    DH_SHIFT(KEY_SLASH),      // 4 W
-    DH_SHIFT(KEY_L),          // 4 N
-    DH_SHIFT(KEY_LEFT_BRACE), // 2 W
-    DH_SHIFT(KEY_C),          // 2 N
-    DH_SHIFT(KEY_Z),          // 4 S
-    DH_SHIFT(KEY_V),          // 3 S
-    DH_SHIFT(KEY_T),          // 2 D
-    DH_SHIFT(KEY_RIGHT_BRACE),// 2 E
-    DH_SHIFT(KEY_N),          // 3 D
-    DH_SHIFT(KEY_ENTER),      // 3 E
-    DH_SHIFT(KEY_B),          // 3 W
-    DH_SHIFT(KEY_R)           // 3 N
+    KEY_DELETE,               // 4 W
+    KEY_F5,                   // 4 N
+    DH_SHIFT(KEY_1),          // 2 W
+    KEY_HOME,                 // 2 N
+    KEY_F7,                   // 4 S
+    KEY_F8,                   // 3 S
+    KEY_F3,                   // 2 D
+    KEY_ENTER,                // 2 E
+    KEY_F2,                   // 3 D
+    KEY_NUM_LOCK,             // 3 E
+    KEY_ESC,                  // 3 W
+    KEY_F6                    // 3 N
 };
 
 
