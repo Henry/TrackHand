@@ -55,12 +55,12 @@ const KEYCODE_TYPE mouse1_1_      = DH_MODE(0xd);
 const KEYCODE_TYPE normalKeyMap[KeyMatrix::nKeys] =
 {
     // Thumb cluster
-    modKeyAlt_,               // Knuckle
+    KEY_TAB,                  // Knuckle
     KEY_BACKSPACE,            // Nail
-    modeKeyShift_,            // Down
-    modeKeyShiftLk_,          // Down-down
+    modeKeyNas_,              // Down
+    modeKeyNasLk_,            // Down-down
     0,                        // --
-    modeKeyMouse_,            // Up
+    modeKeyFn_,               // Up
     KEY_SPACE,                // Pad
 
     0,                        // Gap
@@ -89,10 +89,10 @@ const KEYCODE_TYPE normalKeyMap[KeyMatrix::nKeys] =
 
 
     // Thumb cluster
-    modKeyCtrl_,              // Knuckle
-    KEY_TAB,                  // Nail
-    modeKeyNas_,              // Down
-    modeKeyNasLk_,            // Down-down
+    modKeyAlt_,               // Knuckle
+    modKeyCtrl_,              // Nail
+    modeKeyShift_,            // Down
+    modeKeyShiftLk_,          // Down-down
     0,                        // --
     modeKeyNorm_,             // Up
     KEY_RETURN,               // Pad
@@ -125,12 +125,12 @@ const KEYCODE_TYPE normalKeyMap[KeyMatrix::nKeys] =
 const KEYCODE_TYPE shiftKeyMap[KeyMatrix::nKeys] =
 {
     // Thumb cluster
-    modKeyAlt_,               // Knuckle
+    DH_SHIFT(KEY_TAB),        // Knuckle
     DH_SHIFT(KEY_BACKSPACE),  // Nail
-    modeKeyShift_,            // Down
-    modeKeyShiftLk_,          // Down-down
+    modeKeyNas_,              // Down
+    modeKeyNasLk_,            // Down-down
     0,                        // --
-    modeKeyMouse_,            // Up
+    modeKeyFn_,               // Up
     DH_SHIFT(KEY_SPACE),      // Pad
 
     0,                        // Gap
@@ -158,10 +158,10 @@ const KEYCODE_TYPE shiftKeyMap[KeyMatrix::nKeys] =
     DH_SHIFT(KEY_R),          // 3 N
 
     // Thumb cluster
-    modKeyCtrl_,              // Knuckle
-    DH_SHIFT(KEY_TAB),        // Nail
-    modeKeyFn_,               // Down
-    modeKeyFn_,               // Down-down
+    modKeyAlt_,               // Knuckle
+    modKeyCtrl_,              // Nail
+    modeKeyShift_,            // Down
+    modeKeyShiftLk_,          // Down-down
     0,                        // --
     modeKeyNorm_,             // Up
     DH_SHIFT(KEY_RETURN),     // Pad
@@ -191,10 +191,10 @@ const KEYCODE_TYPE shiftKeyMap[KeyMatrix::nKeys] =
     DH_SHIFT(KEY_COMMA)       // 3 N
 };
 
-const KEYCODE_TYPE mouseKeyMap[KeyMatrix::nKeys] =
+const KEYCODE_TYPE functionKeyMap[KeyMatrix::nKeys] =
 {
     // Thumb cluster
-    modKeyAlt_,               // Knuckle
+    KEY_TAB,                  // Knuckle
     mouse3_,                  // Nail
     mouse1_,                  // Down
     mouse1_1_,                // Down-down
@@ -227,10 +227,10 @@ const KEYCODE_TYPE mouseKeyMap[KeyMatrix::nKeys] =
     DH_SHIFT(KEY_R),          // 3 N
 
     // Thumb cluster
-    modKeyCtrl_,              // Knuckle
-    KEY_TAB,                  // Nail
-    modeKeyNas_,              // Down
-    modeKeyNasLk_,            // Down-down
+    modKeyAlt_,               // Knuckle
+    modKeyCtrl_,              // Nail
+    modeKeyShift_,            // Down
+    modeKeyShiftLk_,          // Down-down
     0,                        // --
     modeKeyNorm_,             // Up
     KEY_RETURN,               // Pad

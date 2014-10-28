@@ -328,8 +328,8 @@ KeyMatrix::KeyMatrix()
     normalMode_(false, normalKeyMap, 31),
     shiftMode_(false, shiftKeyMap, 24),
     nasMode_(false, normalKeyMap, 30),
-    fnMode_(false, normalKeyMap, 29),
-    mouseMode_(true, mouseKeyMap, 28),
+    fnMode_(true, functionKeyMap, 29),
+    mouseMode_(true, functionKeyMap, 28),
     currentMode_(normalMode_.set(NULL))
 {}
 
