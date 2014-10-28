@@ -31,6 +31,9 @@
 #include "Mode.h"
 #include "MCP23018.h"
 
+// Add offset to indicate key is a mode or modifier
+#define DH_MODE(key) key + KeyMatrix::modeOffset_
+
 // -----------------------------------------------------------------------------
 
 class KeyMatrix
@@ -42,6 +45,9 @@ class KeyMatrix
 
         //- Number of matrix rows
         static const uint8_t nRows_ = 14;
+
+        //- Number of keys in matrix
+        static const uint8_t nKeys = 2*nColumns_*nRows_;
 
         //- Right-hand matrix column pins
         const uint8_t rhColumns_[nColumns_] =
@@ -69,11 +75,39 @@ class KeyMatrix
             10, 8, 7, 12, 6, 15, 9, 14, 13, 11 // Fingers
         };
 
-        //- Photo-transistor stabilisation time (us)
-        const uint16_t columnStabTime_ = 100;
+        //- Key-code offset to indicate key selects mode or modifier
+        static const uint8_t modeOffset_ = 0xf0;
 
-        //- Matrix scan loop delay time (ms)
-        const uint16_t loopDelayTime_ = 10;
+        //- Key-code offset to indicate key is shifted
+        static const uint8_t shiftOffset_ = 0x80;
+
+        // Mode key codes
+        static const KEYCODE_TYPE modeKeyNorm_   = DH_MODE(0x0);
+        static const KEYCODE_TYPE modeKeyShift_  = DH_MODE(0x1);
+        static const KEYCODE_TYPE modeKeyShiftLk_= DH_MODE(0x2);
+        static const KEYCODE_TYPE modeKeyNas_    = DH_MODE(0x3);
+        static const KEYCODE_TYPE modeKeyNasLk_  = DH_MODE(0x4);
+        static const KEYCODE_TYPE modeKeyFn_     = DH_MODE(0x5);
+        static const KEYCODE_TYPE modeKeyMouse_  = DH_MODE(0x6);
+
+        // Modifier key codes
+        static const KEYCODE_TYPE modKeyShift_   = DH_MODE(0x7);
+        static const KEYCODE_TYPE modKeyCtrl_    = DH_MODE(0x8);
+        static const KEYCODE_TYPE modKeyAlt_     = DH_MODE(0x9);
+
+        // Mouse button key codes
+        static const KEYCODE_TYPE mouse1_        = DH_MODE(0xa);
+        static const KEYCODE_TYPE mouse2_        = DH_MODE(0xb);
+        static const KEYCODE_TYPE mouse3_        = DH_MODE(0xc);
+        static const KEYCODE_TYPE mouse1_1_      = DH_MODE(0xd);
+
+        // Keyboard programming mode
+        static const KEYCODE_TYPE modeKeyPrgm_   = DH_MODE(0xe);
+
+        static const KEYCODE_TYPE normalKeyMap[nKeys];
+        static const KEYCODE_TYPE shiftKeyMap[nKeys];
+        static const KEYCODE_TYPE nasKeyMap[nKeys];
+        static const KEYCODE_TYPE functionKeyMap[nKeys];
 
         //- Maximum number of pressed keys stored
         static const uint8_t maxPressed_ = 16;
@@ -82,14 +116,22 @@ class KeyMatrix
         //  Fixed to 6 for USB keyboards
         static const uint8_t maxSend_ = 6;
 
+
         //- Interaface to the IO-expander in the left-hand unit
         MCP23018 leftHand_;
 
+        // Keyboard modes
         Mode normalMode_;
         Mode shiftMode_;
         Mode nasMode_;
         Mode fnMode_;
         Mode mouseMode_;
+
+        //- Photo-transistor stabilisation time (us)
+        const uint16_t columnStabTime_ = 100;
+
+        //- Matrix scan loop delay time (ms)
+        const uint16_t loopDelayTime_ = 10;
 
         //- Current mode
         const Mode *currentMode_;
@@ -149,13 +191,6 @@ class KeyMatrix
 
 public:
 
-    static const uint8_t modeOffset_ = 0xf0;
-    static const uint8_t shiftOffset_ = 0x80;
-
-    //- Number of keys in matrix
-    static const uint8_t nKeys = 2*nColumns_*nRows_;
-
-
     //- Constructor
     KeyMatrix();
 
@@ -176,6 +211,12 @@ public:
 
         //- Loop pause to avoid overloading the USB HID interface
         void pause();
+
+        //- Add offset to key-code to indicate key is shifted
+        static inline KEYCODE_TYPE shiftKeyCode(const KEYCODE_TYPE& key)
+        {
+            return key + KeyMatrix::shiftOffset_;
+        }
 };
 
 

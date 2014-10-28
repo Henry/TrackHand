@@ -22,40 +22,16 @@
 ///  Description:
 // -----------------------------------------------------------------------------
 
-// Add offset to indicate key is a mode or modifier
-#define DH_MODE(key) key + KeyMatrix::modeOffset_
+#include "KeyMatrix.h"
 
 // Add offset to indicate key is shifted
-// #define DH_SHIFT(key) key + KeyMatrix::shiftOffset_
 inline KEYCODE_TYPE DH_SHIFT(const KEYCODE_TYPE& key)
 {
-    return key + KeyMatrix::shiftOffset_;
+    return KeyMatrix::shiftKeyCode(key);
 }
 
-// Mode key codes
-const KEYCODE_TYPE modeKeyNorm_   = DH_MODE(0x0);
-const KEYCODE_TYPE modeKeyShift_  = DH_MODE(0x1);
-const KEYCODE_TYPE modeKeyShiftLk_= DH_MODE(0x2);
-const KEYCODE_TYPE modeKeyNas_    = DH_MODE(0x3);
-const KEYCODE_TYPE modeKeyNasLk_  = DH_MODE(0x4);
-const KEYCODE_TYPE modeKeyFn_     = DH_MODE(0x5);
-const KEYCODE_TYPE modeKeyMouse_  = DH_MODE(0x6);
 
-// Modifier key codes
-const KEYCODE_TYPE modKeyShift_   = DH_MODE(0x7);
-const KEYCODE_TYPE modKeyCtrl_    = DH_MODE(0x8);
-const KEYCODE_TYPE modKeyAlt_     = DH_MODE(0x9);
-
-// Mouse button key codes
-const KEYCODE_TYPE mouse1_        = DH_MODE(0xa);
-const KEYCODE_TYPE mouse2_        = DH_MODE(0xb);
-const KEYCODE_TYPE mouse3_        = DH_MODE(0xc);
-const KEYCODE_TYPE mouse1_1_      = DH_MODE(0xd);
-
-// Keyboard programming mode
-const KEYCODE_TYPE modeKeyPrgm_   = DH_MODE(0xe);
-
-const KEYCODE_TYPE normalKeyMap[KeyMatrix::nKeys] =
+const KEYCODE_TYPE KeyMatrix::normalKeyMap[KeyMatrix::nKeys] =
 {
     // Thumb cluster
     KEY_TAB,                  // Knuckle
@@ -125,7 +101,7 @@ const KEYCODE_TYPE normalKeyMap[KeyMatrix::nKeys] =
     KEY_COMMA                 // 3 N
 };
 
-const KEYCODE_TYPE shiftKeyMap[KeyMatrix::nKeys] =
+const KEYCODE_TYPE KeyMatrix::shiftKeyMap[KeyMatrix::nKeys] =
 {
     // Thumb cluster
     DH_SHIFT(KEY_TAB),        // Knuckle
@@ -194,7 +170,7 @@ const KEYCODE_TYPE shiftKeyMap[KeyMatrix::nKeys] =
     DH_SHIFT(KEY_COMMA)       // 3 N
 };
 
-const KEYCODE_TYPE nasKeyMap[KeyMatrix::nKeys] =
+const KEYCODE_TYPE KeyMatrix::nasKeyMap[KeyMatrix::nKeys] =
 {
     // Thumb cluster
     KEY_TAB,                  // Knuckle
@@ -264,7 +240,7 @@ const KEYCODE_TYPE nasKeyMap[KeyMatrix::nKeys] =
     DH_SHIFT(KEY_COMMA)       // 3 N
 };
 
-const KEYCODE_TYPE functionKeyMap[KeyMatrix::nKeys] =
+const KEYCODE_TYPE KeyMatrix::functionKeyMap[KeyMatrix::nKeys] =
 {
     // Thumb cluster
     KEY_TAB,                  // Knuckle
