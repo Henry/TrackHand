@@ -269,7 +269,7 @@ const KEYCODE_TYPE KeyMatrix::functionKeyMap[KeyMatrix::nKeys] =
     KEY_PAUSE,                // 3 S
     0,                        // 4 S
     KEY_F6,                   // 2 D
-    modKeyShift_,             // 2 E
+    0,                        // 2 E
     KEY_F7,                   // 3 D
     KEY_ENTER,                // 3 E
     KEY_INSERT,               // 3 W
@@ -278,8 +278,8 @@ const KEYCODE_TYPE KeyMatrix::functionKeyMap[KeyMatrix::nKeys] =
     // Thumb cluster
     modKeyAlt_,               // Knuckle
     modKeyCtrl_,              // Nail
-    modeKeyShift_,            // Down
-    modeKeyShiftLk_,          // Down-down
+    modKeyShift_,             // Down
+    modeKeyShift_,            // Down-down
     0,                        // --
     modeKeyNorm_,             // Up
     KEY_RETURN,               // Pad
