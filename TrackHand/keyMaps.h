@@ -208,26 +208,26 @@ const KEYCODE_TYPE nasKeyMap[KeyMatrix::nKeys] =
     0,                        // Gap
 
     // Finger cluster
-    KEY_D,                    // 1 W
-    KEY_G,                    // 1 N
-    KEY_H,                    // 1 D
-    KEY_F,                    // 1 E
-    KEY_S,                    // 4 D
+    KEY_6,                    // 1 W
+    DH_SHIFT(KEY_6),          // 1 N
+    KEY_7,                    // 1 D
+    0,                        // 1 E
+    KEY_0,                    // 4 D
     KEY_MINUS,                // 4 E
-    KEY_M,                    // 1 S
-    KEY_W,                    // 2 S
-    KEY_SLASH,                // 4 W
-    KEY_L,                    // 4 N
+    DH_SHIFT(KEY_7),          // 1 S
+    DH_SHIFT(KEY_MINUS),      // 2 S
+    DH_SHIFT(KEY_SLASH),      // 4 W
+    KEY_LEFT_BRACE,           // 4 N
     DH_SHIFT(KEY_9),          // 2 W
-    KEY_C,                    // 2 N
-    KEY_V,                    // 3 S
-    KEY_Z,                    // 4 S
-    KEY_T,                    // 2 D
+    DH_SHIFT(KEY_8),          // 2 N
+    DH_SHIFT(KEY_RIGHT_BRACE),// 3 S
+    KEY_RIGHT_BRACE,          // 4 S
+    KEY_8,                    // 2 D
     DH_SHIFT(KEY_0),          // 2 E
-    KEY_N,                    // 3 D
+    KEY_9,                    // 3 D
     KEY_ENTER,                // 3 E
-    KEY_B,                    // 3 W
-    KEY_R,                    // 3 N
+    KEY_SLASH,                // 3 W
+    DH_SHIFT(KEY_LEFT_BRACE), // 3 N
 
 
     // Thumb cluster
@@ -242,26 +242,26 @@ const KEYCODE_TYPE nasKeyMap[KeyMatrix::nKeys] =
     0,                        // Gap
 
     // Finger cluster
-    KEY_Y,                    // 1 W
-    KEY_P,                    // 1 N
-    KEY_U,                    // 1 D
-    KEY_I,                    // 1 E
-    KEY_A,                    // 4 D
-    KEY_TILDE,                // 4 E
-    KEY_J,                    // 2 S
-    KEY_K,                    // 1 S
+    DH_SHIFT(KEY_4),          // 1 W
+    DH_SHIFT(KEY_5),          // 1 N
+    KEY_4,                    // 1 D
+    KEY_5,                    // 1 E
+    KEY_1,                    // 4 D
+    DH_SHIFT(KEY_TILDE),      // 4 E
+    DH_SHIFT(KEY_EQUAL),      // 2 S
+    DH_SHIFT(KEY_3),          // 1 S
     KEY_DELETE,               // 4 W
-    KEY_QUOTE,                // 4 N
+    DH_SHIFT(KEY_QUOTE),      // 4 N
     DH_SHIFT(KEY_1),          // 2 W
-    KEY_PERIOD,               // 2 N
-    KEY_SEMICOLON,            // 4 S
-    KEY_Q,                    // 3 S
-    KEY_E,                    // 2 D
-    DH_SHIFT(KEY_2),          // 2 E
-    KEY_O,                    // 3 D
-    KEY_X,                    // 3 E
+    DH_SHIFT(KEY_PERIOD),     // 2 N
+    KEY_COMMA,                // 4 S
+    KEY_EQUAL,                // 3 S
+    KEY_3,                    // 2 D
+    KEY_PERIOD,               // 2 E
+    KEY_2,                    // 3 D
+    KEY_QUOTE,                // 3 E
     KEY_ESC,                  // 3 W
-    KEY_COMMA                 // 3 N
+    DH_SHIFT(KEY_COMMA)       // 3 N
 };
 
 const KEYCODE_TYPE functionKeyMap[KeyMatrix::nKeys] =
