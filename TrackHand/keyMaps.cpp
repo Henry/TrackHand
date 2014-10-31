@@ -189,13 +189,13 @@ const KEYCODE_TYPE KeyMatrix::nasKeyMap[KeyMatrix::nKeys] =
     KEY_7,                    // 1 D
     0,                        // 1 E
     KEY_0,                    // 4 D
-    KEY_MINUS,                // 4 E
-    DH_SHIFT(KEY_7),          // 1 S
-    DH_SHIFT(KEY_MINUS),      // 2 S
+    DH_SHIFT(KEY_MINUS),      // 4 E
+    KEY_MINUS,                // 1 S
+    DH_SHIFT(KEY_8),          // 2 S
     DH_SHIFT(KEY_SLASH),      // 4 W
     KEY_LEFT_BRACE,           // 4 N
     DH_SHIFT(KEY_9),          // 2 W
-    DH_SHIFT(KEY_8),          // 2 N
+    DH_SHIFT(KEY_7),          // 2 N
     DH_SHIFT(KEY_RIGHT_BRACE),// 3 S
     KEY_RIGHT_BRACE,          // 4 S
     KEY_8,                    // 2 D
@@ -218,20 +218,20 @@ const KEYCODE_TYPE KeyMatrix::nasKeyMap[KeyMatrix::nKeys] =
     0,                        // Gap
 
     // Finger cluster
-    DH_SHIFT(KEY_4),          // 1 W
-    DH_SHIFT(KEY_5),          // 1 N
+    DH_SHIFT(KEY_5),          // 1 W
+    DH_SHIFT(KEY_4),          // 1 N
     KEY_4,                    // 1 D
     KEY_5,                    // 1 E
     KEY_1,                    // 4 D
     DH_SHIFT(KEY_TILDE),      // 4 E
-    DH_SHIFT(KEY_EQUAL),      // 2 S
-    DH_SHIFT(KEY_3),          // 1 S
+    KEY_EQUAL,                // 2 S
+    DH_SHIFT(KEY_EQUAL),      // 1 S
     KEY_DELETE,               // 4 W
     DH_SHIFT(KEY_QUOTE),      // 4 N
     DH_SHIFT(KEY_1),          // 2 W
     DH_SHIFT(KEY_PERIOD),     // 2 N
     KEY_COMMA,                // 4 S
-    KEY_EQUAL,                // 3 S
+    DH_SHIFT(KEY_3),          // 3 S
     KEY_3,                    // 2 D
     KEY_PERIOD,               // 2 E
     KEY_2,                    // 3 D

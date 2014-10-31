@@ -314,7 +314,7 @@ bool KeyMatrix::send()
         }
     }
 
-    if (keysChanged || mouseButtonsChanged)
+    if (keysChanged || modifiersChanged || mouseButtonsChanged)
     {
         return true;
     }
