@@ -19,6 +19,11 @@
   obsolete Logitech TrackMan Marble FX trackball which I used for 15years:
   [[www.youtube.com/watch?v=k_sZMnmEOp4]]
 * Images
+  Here is are the upgraded units with a trackball in the right-hand unit only,
+  mouse buttons mapped to the right-hand thumb-cluster in function mode and
+  current legends:
+  [[https://github.com/Henry/TrackHand/raw/master/Images/CompletedUnits.jpg]]
+
   Here is the inside of the right-hand unit showing the new micro-controller and
   trackball with the ADNS-9800 sensor:
   [[https://github.com/Henry/TrackHand/raw/master/Images/InsideRight.jpg]]
