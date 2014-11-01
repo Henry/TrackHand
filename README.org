@@ -11,30 +11,33 @@
   and use this as a test-platform for an integrated laser trackball fitted
   closely below the finger cluster.  The trackball is intended for finger
   control with the mouse buttons included in a special mode and mapped to the
-  thumb-cluster keys.  Once the initial aim is fulfilled the trackball hardware
-  and software could be fitted to the [[http://www.google.com/url?q=http://geekhack.org/index.php%3Ftopic%3D41422.30&sa=U&ei=3BZNVO7aKebZ7gahhoHwBQ&ved=0CBQQFjAA&usg=AFQjCNH0Grb5lPui4hwmJ46NEKVVzCrCww][DodoHand]] as an alternative to the proposed
-  TrackPoint pointing device.
+  thumb-cluster keys.  The proposed layout of ball and switches is reminiscent
+  of the excellent but obsolete Logitech TrackMan Marble FX trackball which I
+  used for 15years: [[www.youtube.com/watch?v=k_sZMnmEOp4]]
 
-  The proposed layout of ball and switches is reminiscent of the excellent but
-  obsolete Logitech TrackMan Marble FX trackball which I used for 15years:
-  [[www.youtube.com/watch?v=k_sZMnmEOp4]]
+  Once the initial aim is fulfilled the trackball hardware and software could be
+  fitted to the
+  [[http://geekhack.org/index.php?topic=41422.msg827691#msg827691][DodoHand]] as
+  an alternative to the proposed TrackPoint pointing device.  Details of this
+  project may be found in the same thread:
+  [[http://geekhack.org/index.php?topic=41422.msg1509793#msg1509793][TrackHand]]
+  with some discussion concerning the suitability of the 2 1/4" trackball for
+  the DodoHand.
 * Images
   Here are the upgraded units with a trackball in the right-hand unit only,
   mouse buttons mapped to the right-hand thumb-cluster in function mode and
   current legends:
   [[https://github.com/Henry/TrackHand/raw/master/Images/CompletedUnits.jpg]]
-
   Here is the inside of the right-hand unit showing the new micro-controller and
   trackball with the ADNS-9800 sensor:
   [[https://github.com/Henry/TrackHand/raw/master/Images/InsideRight.jpg]]
-
 * Teensy 3
-  The [[https://www.pjrc.com/teensy/teensy31.html][Teensy-3.1]] micro-controller is used in this project.  Any of the Teensy
-  boards could be used but I wanted to play around with this latest and most
-  powerful offering from PJRC and the price is very reasonable.  The
-  installation notes are really for my own reference but they may be useful to
-  others.  I am developing software under OpenSuSE but all these tools are
-  available for other GNU/Linux distributions.
+  The [[https://www.pjrc.com/teensy/teensy31.html][Teensy-3.1]] micro-controller
+  is used in this project.  Any of the Teensy boards could be used but I wanted
+  to play around with this latest and most powerful offering from PJRC and the
+  price is very reasonable.  The installation notes are really for my own
+  reference but they may be useful to others.  I am developing software under
+  OpenSuSE but all these tools are available for other GNU/Linux distributions.
 *** Install AVR tools on OpenSuSE
     Open /firefox/ and follow instructions on
     + http://software.opensuse.org/package/cross-avr-gcc
@@ -105,8 +108,8 @@
 * DataHand DH200-6
   The DataHand keyboard receiving this extreme makeover is a second-hand 1993
   DH200-6 is decent condition and basically working.  All the existing
-  electronics is removed leaving just the thumb and finger switch clusters.  The
-  leds on the key map panel can also be reused.
+  electronics are removed leaving just the thumb and finger switch clusters.
+  The leds on the key map panel are also be reused.
 *** Thumb Cluster
     The 8-pin IDC header on thumb-cluster has the following connections and
     proposed Teensy-3.1 pin allocation
@@ -254,6 +257,9 @@
   which would be OK if it wired directly to the computer rather than wireless
   and battery powered.
 * Compile and Upload
+  The complete source code for the firmware may be found in the =TrackHand=
+  directory and support libraries in the =libraries= directory.  The complete
+  code may be compiled, linked and loaded using =make=:
   + Compile only: =make PROGRAM=TrackHand=
   + Compile and upload: =make PROGRAM=TrackHand load=
   The program defaults to =TrackHand= so
@@ -268,7 +274,9 @@
   complete flexibility for shifted keys the shift and shift-lock keys enable a
   shift-mode rather than simply applying the shift-modifier.
 
-  Here are the keyboard legends for the right-hand and left-hand units:
+  The CAD and PS files for the keyboard legends are in the =KeyboardLegends=
+  directory.  Here are the current keyboard legends for the right-hand and
+  left-hand units:
   [[https://github.com/Henry/TrackHand/raw/master/KeyboardLegends/Both.png]]
 *** Learning to Touch-type
     I am using [[http://klavaro.sourceforge.net/en/][klavaro]] to learn to touch-type on the TrackHand.  I can already
