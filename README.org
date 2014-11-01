@@ -246,3 +246,13 @@
 * Compile and Upload
   + Compile only: =make PROGRAM=TrackHand=
   + Compile and upload: =make PROGRAM=TrackHand load=
+* Dvorak Layout
+  I have created a Dvorak-like layout based on the Kinesis and DataHand
+  Professional II Dvorak layouts adjusted for programming convenience.
+  To allow parentheses to be typed without shift they are included in the normal
+  key-map directly with the shift being generated automatically.  Also to allow
+  complete flexibility for shifted keys the shift and shift-lock keys enable a
+  shift-mode rather than simply applying the shift-modifier.
+
+  Here are the keyboard legends for the current layout:
+  [[./KeyboardLegends/Both.png]]
