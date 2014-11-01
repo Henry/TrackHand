@@ -18,6 +18,11 @@
   The proposed layout of ball and switches is reminiscent of the excellent but
   obsolete Logitech TrackMan Marble FX trackball which I used for 15years:
   [[www.youtube.com/watch?v=k_sZMnmEOp4]]
+* Images
+  Here is the inside of the right-hand unit showing the new micro-controller and
+  trackball with the ADNS-9800 sensor:
+  [[https://github.com/Henry/TrackHand/raw/master/Images/InsideRight.jpg]]
+
 * Teensy 3
   The [[https://www.pjrc.com/teensy/teensy31.html][Teensy-3.1]] micro-controller is used in this project.  Any of the Teensy
   boards could be used but I wanted to play around with this latest and most
@@ -254,5 +259,5 @@
   complete flexibility for shifted keys the shift and shift-lock keys enable a
   shift-mode rather than simply applying the shift-modifier.
 
-  Here are the keyboard legends for the current layout:
+  Here are the keyboard legends for the right-hand and left-hand units:
   [[https://github.com/Henry/TrackHand/raw/master/KeyboardLegends/Both.png]]
