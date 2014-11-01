@@ -105,14 +105,10 @@
     [[http://ww1.microchip.com/downloads/en/DeviceDoc/22103a.pdf][MP23018
     datasheet]].
 *** ADNS-9800 LaserStream Gaming Sensor library
-    The ADNS-9800 LaserStream Gaming Sensor is used to scan the motion of the 2
-    1/4" Pool ball.  The Kicklighter breakout board is used
+    The ADNS-9800 LaserStream Gaming Sensor is used to scan the motion ball.
+    The Kicklighter breakout board is used
     + https://www.kickstarter.com/projects/1034145369/high-speed-laser-optical-sensor
     + https://www.tindie.com/products/jkicklighter/adns-9800-optical-laser-sensor/
-    Initially a cue-ball was tried but the sensor could not detect the motion
-    reliably if the ball moves fast.  This may be an issue with inaccurate
-    positioning of the sensor.  A "Golden-8" ball with metallic colour is now
-    used which the sensor can follow more reliably.
 
     Teensy interface for the ADNS-9800 used in this project is based on that
     provided by John Kicklighter and connects to the Teensy-3.1 via the SPI
@@ -232,6 +228,35 @@
     | Wake-up GPIO pin                      |     1 |
     |---------------------------------------+-------|
     | Total                                 |    30 |
+* Trackball Installation
+  To provide the best shape for the finger-driven trackball fitted is the curve
+  of the finger-cluster I found that the standard 2 1/4" pool-ball to be the
+  best compromise.  From a curvature point of view a slightly larger ball might
+  be more comfortable but then it would need a higher case and would require
+  further re-arrangement of the thumb switches.  Also the 2 1/4" pool-ball is
+  the largest high-quality ball readily available.  Even with this size of ball
+  a significant change needed to be made to the thumb-cluster to fit it in a
+  suitable position, starting with the relocation of the "up" switch further in
+  to allow aggressive trimming of the PCB and re-routing of cut tracks.  Slight
+  trimming of the finger-cluster PCB was also required but this did not require
+  the cutting and re-routing of any tracks.
+
+  For convenient prototyping and testing I made the cup supporting the trackball
+  by hand using [[http://www.polymorphplastic.co.uk/][Polymorph]] by rolling a
+  thick-ish sheet and molding around the ball with a thick rubber glove
+  stretched over it to ensure the cup is slightly larger that the ball.  I
+  created flattened regions on the cup for the fitting of the laser sensor and
+  to fit it to the case using a belt-sander.  The lugs to attach the laser
+  sensor and fix the unit to the case are attached using hot-glue.  Three 2mm
+  rubys support the ball and are fitted to the cup through 2mm drilled holes and
+  pushed so they protrude using 2.5mm self-tapping screws.
+
+  Initially I tried a cue-ball but the sensor could not detect the motion
+  reliably if the ball moves fast.  This may be an issue with inaccurate
+  positioning of the sensor.  I now use an
+  [[http://www.aramithpoolballs.com/bbgold8.html][Aramith "Golden-8"]] ball with
+  metallic finish which the sensor can follow more reliably.  This is the closes
+  to the balls which Kensignton use but readily available and reasonably priced.
 * Low-power sleep mode
   To save power, IR LEDs and in particular the laser sensor it is important to
   include a sleep mode.  Sleep functionality in the ARM-based Teensy 3.1 is
