@@ -19,7 +19,7 @@
   obsolete Logitech TrackMan Marble FX trackball which I used for 15years:
   [[www.youtube.com/watch?v=k_sZMnmEOp4]]
 * Images
-  Here is are the upgraded units with a trackball in the right-hand unit only,
+  Here are the upgraded units with a trackball in the right-hand unit only,
   mouse buttons mapped to the right-hand thumb-cluster in function mode and
   current legends:
   [[https://github.com/Henry/TrackHand/raw/master/Images/CompletedUnits.jpg]]
@@ -256,6 +256,10 @@
 * Compile and Upload
   + Compile only: =make PROGRAM=TrackHand=
   + Compile and upload: =make PROGRAM=TrackHand load=
+  The program defaults to =TrackHand= so
+  + Compile only: =make=
+  + Compile and upload: =make load=
+  is sufficient.
 * Dvorak Layout
   I have created a Dvorak-like layout based on the Kinesis and DataHand
   Professional II Dvorak layouts adjusted for programming convenience.
@@ -266,3 +270,11 @@
 
   Here are the keyboard legends for the right-hand and left-hand units:
   [[https://github.com/Henry/TrackHand/raw/master/KeyboardLegends/Both.png]]
+*** Learning to Touch-type
+    I am using [[http://klavaro.sourceforge.net/en/][klavaro]] to learn to touch-type on the TrackHand.  I can already
+    touch-type on the Kinesis Advantage with the Dvorak layout and the I have
+    created a layout for the TrackHand which is reasonably similar which has
+    been helpful when learning the normal keys but the layout of the symbols is
+    VERY different.  I set the keyboard to =USA dvorak= and found that the
+    tutorials corresponded well to the layout of keys for both the alphabetic
+    characters and reasonably well to the symbols.
