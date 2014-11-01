@@ -242,14 +242,15 @@
   the cutting and re-routing of any tracks.
 
   For convenient prototyping and testing I made the cup supporting the trackball
-  by hand using [[http://www.polymorphplastic.co.uk/][Polymorph]] by rolling a
-  thick-ish sheet and molding around the ball with a thick rubber glove
-  stretched over it to ensure the cup is slightly larger that the ball.  I
-  created flattened regions on the cup for the fitting of the laser sensor and
-  to fit it to the case using a belt-sander.  The lugs to attach the laser
-  sensor and fix the unit to the case are attached using hot-glue.  Three 2mm
-  rubys support the ball and are fitted to the cup through 2mm drilled holes and
-  pushed so they protrude using 2.5mm self-tapping screws.
+  by hand using [[http://www.polymorphplastic.co.uk/][Polymorph]] (known as
+  Friendly Plastic in the US) by rolling a thick-ish sheet and molding around
+  the ball with a thick rubber glove stretched over it to ensure the cup is
+  slightly larger that the ball.  I created flattened regions on the cup for the
+  fitting of the laser sensor and to fit it to the case using a belt-sander.
+  The lugs to attach the laser sensor and fix the unit to the case are attached
+  using hot-glue.  Three 2mm rubys support the ball and are fitted to the cup
+  through 2mm drilled holes and pushed so they protrude using 2.5mm self-tapping
+  screws.
 
   Initially I tried a cue-ball but the sensor could not detect the motion
   reliably if the ball moves fast.  This may be an issue with inaccurate
