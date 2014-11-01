@@ -13,7 +13,8 @@
   control with the mouse buttons included in a special mode and mapped to the
   thumb-cluster keys.  The proposed layout of ball and switches is reminiscent
   of the excellent but obsolete Logitech TrackMan Marble FX trackball which I
-  used for 15years: [[www.youtube.com/watch?v=k_sZMnmEOp4]]
+  used for 15years: [[http:www.youtube.com/watch?v=k_sZMnmEOp4][Logitech
+  TrackMan video]].
 
   Once the initial aim is fulfilled the trackball hardware and software could be
   fitted to the
