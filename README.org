@@ -8,13 +8,13 @@
 * Aim
   The initial aim of this project is to replace the archaic firmware in a
   DataHand DH200-6 keyboard with an ARM-based micro-controller and USB interface
-  and use this as a test-platform for an integrated laser trackball fitted
-  closely below the finger cluster.  The trackball is intended for finger
-  control with the mouse buttons included in a special mode and mapped to the
-  thumb-cluster keys.  The proposed layout of ball and switches is reminiscent
-  of the excellent but obsolete Logitech TrackMan Marble FX trackball which I
-  used for 15years: [[http://www.youtube.com/watch?v=k_sZMnmEOp4][Logitech
-  TrackMan video]].
+  and use this as a test-platform for an integrated laser trackball using the
+  ADNS-9800 LaserStream gaming sensor fitted closely below the finger cluster.
+  The trackball is intended for finger control with the mouse buttons included
+  in a special mode and mapped to the thumb-cluster keys.  The proposed layout
+  of ball and switches is reminiscent of the excellent but obsolete Logitech
+  TrackMan Marble FX trackball which I used for 15years:
+  [[http://www.youtube.com/watch?v=k_sZMnmEOp4][Logitech TrackMan video]].
 
   Once the initial aim is fulfilled the trackball hardware and software could be
   fitted to the
@@ -32,7 +32,7 @@
   Here is the inside of the right-hand unit showing the new micro-controller and
   trackball with the ADNS-9800 sensor:
   [[https://github.com/Henry/TrackHand/raw/master/Images/InsideRight.jpg]]
-* Teensy 3
+* Teensy 3 Software
   The [[https://www.pjrc.com/teensy/teensy31.html][Teensy-3.1]] micro-controller
   is used in this project.  Any of the Teensy boards could be used but I wanted
   to play around with this latest and most powerful offering from PJRC and the
@@ -45,15 +45,17 @@
     + Use the 1-click install of /CrossToolchain:avr/
 *** Enable serial (based on notes from PJRC)
     The udev rule file gives non-root users permission to use the Teensy device.
+    Download [[http://www.pjrc.com/teensy/49-teensy.rules][49-teensy.rules]]
     + =sudo cp 49-teensy.rules /etc/udev/rules.d/=
     Add user to /uucp/ and /dialout/ groups
     + =uucp:x:14:<username>=
     + =dialout:x:16:<username>=
-*** Teensyduino (avoid)
-    Annoying Java interface to building and loading teensy applications.  This
-    is the only method supported directly by PJRC on the Teensy-3.1.  However,
-    other people are maintaining CLI support software for the Teensy-3.1.
-*** Make (use instead of Teensyduino)
+*** Avoid Teensyduino
+    Teensyduino is the annoying Java interface to building and loading teensy
+    applications.  This is the only method supported directly by PJRC on the
+    Teensy-3.1.  However, other people are maintaining CLI support software for
+    the Teensy-3.1 based on the applications released by PJRC for the Teensy-2.
+*** Make (used instead of Teensyduino)
     Install the arduino libraries and make file for Teensy-3.x
     + =git clone= https://github.com/apmorton/teensy-template
     This repository started from the /teensy-template/ repository, so you do not
@@ -63,50 +65,63 @@
     + =make=
     + =make upload=
     + Press the button
-*** CLI (use instead of Teensyduino)
+*** CLI Loader (used instead of Teensyduino)
     Download the latest CLI app for teensy-3.1
     + =git clone= https://github.com/texane/teensy3.git
     + =cd teensy3/src/teensy_loader_cli=
     + =make=
-    + =cp teensy_loader_cli ~/bin/linux=
+    + Install somewhere in your =PATH= /eg/: =cp teensy_loader_cli ~/bin/linux=
 *** Using GNU screen or cat to listen to serial messages
     On OpenSuSE the USB serial device =/dev/ttyACM0= is created following
     =Serial.begin()= and may be interrogated using =screen= or just plain old
     =cat=:
     + =screen /dev/ttyACM0=
     + =cat /dev/ttyACM0=
-*** I2C "wire" comms library
-    This is included in this repository: /libraries/Wire/
+    Sometimes there is a problem with the connection and printing stops due to
+    buffering.  To remedy this change the tty settings:
+    + stty -F /dev/ttyACM0 9600 raw
+*** I2C comms library
+    This library is included: /libraries/i2c_t3/
     + http://forum.pjrc.com/threads/21680-New-I2C-library-for-Teensy3
-    I2C is used to connect the right-hand unit to the left-hand IO-expander.
+    I2C is used to connect the right-hand unit to the left-hand MCP23018
+    IO-expander.
 ***** Teensy-3 pins
       + SCL: pin 19 with 4k7 pull-up resistor
       + SDA: pin 18 with 4k7 pull-up resistor
       To connect two teensys connect SCL to SCL and SDA to SDA with the pull-up
       resistors.
 *** Serial Peripheral Interface (SPI) library
-    This is already included in this repository: /libraries/spi4teensy3/
+    This library is included: /libraries/spi4teensy3/
     + https://github.com/xxxajk/spi4teensy3
 *** Low-power library
-    This is included in this repository: /libraries/LowPower_Teensy3/
+    This is included: /libraries/LowPower_Teensy3/
     + [[https://github.com/duff2013/LowPower_Teensy3.git]]
-* Trackball using the ADNS-9800 LaserStream Gaming Sensor
-  The ADNS-9800 LaserStream Gaming Sensor is used to scan the motion of the 2
-  1/4" Pool ball.  The Kicklighter breakout board is used
-  + https://www.kickstarter.com/projects/1034145369/high-speed-laser-optical-sensor
-  + https://www.tindie.com/products/jkicklighter/adns-9800-optical-laser-sensor/
-  Initially a cue-ball was tried but the sensor could not detect the motion
-  reliably if the ball moves fast.  This may be an issue with inaccurate
-  positioning of the sensor.  A "Golden-8" ball with metallic colour is now used
-  which the sensor can follow more reliably.
-*** Teensy software for the ADNS-9800
+*** MCP23018 library
+    Interface to the MCP23018 IO-expander used to scan the optical switch matrix
+    in the left-hand unit and send the data to the Teensy-3.1 micro-controller
+    in the right-hand unit via the I2C connection.  This library is an
+    incomplete but sufficient interface to the MCP23018 chip created for this
+    project with reference to the
+    [[http://ww1.microchip.com/downloads/en/DeviceDoc/22103a.pdf][MP23018
+    datasheet]].
+*** ADNS-9800 LaserStream Gaming Sensor library
+    The ADNS-9800 LaserStream Gaming Sensor is used to scan the motion of the 2
+    1/4" Pool ball.  The Kicklighter breakout board is used
+    + https://www.kickstarter.com/projects/1034145369/high-speed-laser-optical-sensor
+    + https://www.tindie.com/products/jkicklighter/adns-9800-optical-laser-sensor/
+    Initially a cue-ball was tried but the sensor could not detect the motion
+    reliably if the ball moves fast.  This may be an issue with inaccurate
+    positioning of the sensor.  A "Golden-8" ball with metallic colour is now
+    used which the sensor can follow more reliably.
+
     Teensy interface for the ADNS-9800 used in this project is based on that
-    provided by John Kicklighter
+    provided by John Kicklighter and connects to the Teensy-3.1 via the SPI
     + https://github.com/mrjohnk/ADNS-9800.git
     + https://github.com/mrjohnk/Trackball2.git
     with updates for the Teensy-3.1 from
     + https://github.com/pepijndevos/Dwergmuis
-* DataHand DH200-6
+    and is included: /libraries/TrackBall/
+* The DataHand DH200-6
   The DataHand keyboard receiving this extreme makeover is a second-hand 1993
   DH200-6 is decent condition and basically working.  All the existing
   electronics are removed leaving just the thumb and finger switch clusters.
