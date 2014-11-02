@@ -314,7 +314,9 @@
   To allow parentheses to be typed without shift they are included in the normal
   key-map directly with the shift being generated automatically.  Also to allow
   complete flexibility for shifted keys the shift and shift-lock keys enable a
-  shift-mode rather than simply applying the shift-modifier.
+  shift-mode rather than simply applying the shift-modifier.  While the
+  locations of the normal characters is fairly obvious it is less clear where
+  the symbols should be located and this is still in a state of flux.
 
   The CAD and PS files for the keyboard legends are in the =KeyboardLegends=
   directory.  Here are the current keyboard legends for the right-hand and
