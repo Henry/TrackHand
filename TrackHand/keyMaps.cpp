@@ -189,10 +189,10 @@ const KEYCODE_TYPE KeyMatrix::nasKeyMap[KeyMatrix::nKeys] =
     KEY_7,                    // 1 D
     0,                        // 1 E
     KEY_0,                    // 4 D
-    DH_SHIFT(KEY_MINUS),      // 4 E
+    DH_SHIFT(KEY_BACKSLASH),  // 4 E
     KEY_MINUS,                // 1 S
     DH_SHIFT(KEY_8),          // 2 S
-    DH_SHIFT(KEY_SLASH),      // 4 W
+    KEY_BACKSLASH,            // 4 W
     KEY_LEFT_BRACE,           // 4 N
     DH_SHIFT(KEY_9),          // 2 W
     DH_SHIFT(KEY_7),          // 2 N
