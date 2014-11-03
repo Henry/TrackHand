@@ -217,6 +217,13 @@ public:
         {
             return key + KeyMatrix::shiftOffset_;
         }
+
+        bool scroll() const
+        {
+            return
+                currentMode_ == &shiftMode_
+             || modifiersPrev_ & MODIFIERKEY_SHIFT;
+        }
 };
 
 

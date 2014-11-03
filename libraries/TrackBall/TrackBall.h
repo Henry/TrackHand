@@ -36,7 +36,21 @@ class TrackBall
     }
 
     const uint8_t ncs_ = SS;
+
+    //- Motion interupt pin
     const uint8_t mot_ = 9;
+
+    //- Current mode, pointer movement or scroll
+    bool moving_ = true;
+
+    //- Current pointer movement resolution
+    uint8_t moveRes_ = 10;
+
+    //- Current scroll resolution
+    uint8_t scrollRes_ = 1;
+
+    //- Change the resolution for movement or scroll
+    void resolution(const uint8_t res);
 
     //- Moved indicator has to be a static member
     //  as it is used in...
@@ -62,12 +76,16 @@ public:
         //- Wake after sleep
         void wake();
 
-        //- Change the resolution
-        void resolution(const uint8_t newResolution);
+        //- Read and update configuration from USB serial device
+        bool readConfiguration();
 
-        //- Move the pointer if data is present and return true
+        //- Change and save the pointer movement resolution
+        void moveResolution(const uint8_t res);
+
+        //- If data is present move the pointer (if move = true)
+        //  or scroll the screen (if move = false) and return true
         //  otherwise return false
-        bool move();
+        bool moveOrScroll(const bool moving);
 };
 
 

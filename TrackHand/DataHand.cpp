@@ -22,7 +22,8 @@
 ///  Description:
 //    Constructs the KeyMatrix, TrackBall and PowerSave classes
 //    and enters the matrix scan loop.
-//    The trackball operates on interrupt.
+//    The trackball operates pointer movement on interrupt.
+//    The trackball may also be used for scrolling selected by appropriate key.
 // -----------------------------------------------------------------------------
 
 #include "KeyMatrix.h"
@@ -50,7 +51,14 @@ int main(void)
 
     while (1)
     {
-        powerSave(keyMatrix.keysPressed() || trackBall.move());
+        powerSave
+        (
+            // Check for key presses
+            keyMatrix.keysPressed()
+            // Check for pointer motion and move or scroll
+         || trackBall.moveOrScroll(!keyMatrix.scroll())
+        );
+
         keyMatrix.pause();
     }
 

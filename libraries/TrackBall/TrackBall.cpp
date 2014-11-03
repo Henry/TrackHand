@@ -122,6 +122,59 @@ void TrackBall::adnsUploadFirmware()
 }
 
 
+void TrackBall::configure()
+{
+    adnsWriteReg(REG_Configuration_I, EEPROM.read(REG_Configuration_I));
+}
+
+
+void TrackBall::resolution(const uint8_t res)
+{
+    digitalWrite(ncs_, LOW);
+    adnsWriteReg(REG_Configuration_I, res);
+    digitalWrite(ncs_, HIGH);
+}
+
+
+volatile bool TrackBall::moved_ = true;
+
+
+void TrackBall::moved()
+{
+    TrackBall::moved_ = true;
+}
+
+
+TrackBall::TrackBall()
+{}
+
+
+void TrackBall::begin()
+{
+    // Initialise the movement resolution from the value in EEPROM
+    moveRes_ = EEPROM.read(REG_Configuration_I);
+
+    // Setup SPI pins and interrupt for optical sensor
+    pinMode(ncs_, OUTPUT);
+    pinMode(mot_, INPUT);
+    attachInterrupt(mot_, moved, FALLING);
+
+    wake();
+}
+
+
+void TrackBall::sleep()
+{
+    adnsWriteReg(REG_Shutdown, 0xb6);
+
+    // Switch off the SPI clock
+    pinMode(SCK, OUTPUT);
+
+    // Set the SCK pin to low to switch-off the built-in led on the same pin
+    digitalWrite(SCK, LOW);
+}
+
+
 void TrackBall::wake()
 {
     // 48MHz / 24 = 2MHz = fSCLK
@@ -164,73 +217,51 @@ void TrackBall::wake()
 }
 
 
-void TrackBall::sleep()
+void TrackBall::moveResolution(const uint8_t res)
 {
-    adnsWriteReg(REG_Shutdown, 0xb6);
-
-    // Switch off the SPI clock
-    pinMode(SCK, OUTPUT);
-
-    // Set the SCK pin to low to switch-off the built-in led on the same pin
-    digitalWrite(SCK, LOW);
-}
-
-
-void TrackBall::configure()
-{
-    adnsWriteReg(REG_Configuration_I, EEPROM.read(REG_Configuration_I));
-}
-
-
-volatile bool TrackBall::moved_ = true;
-
-
-void TrackBall::moved()
-{
-    TrackBall::moved_ = true;
-}
-
-
-TrackBall::TrackBall()
-{}
-
-
-void TrackBall::begin()
-{
-    // Setup SPI pins and interrupt for optical sensor
-    pinMode(ncs_, OUTPUT);
-    pinMode(mot_, INPUT);
-    attachInterrupt(mot_, moved, FALLING);
-
-    wake();
-    // resolution(10);
-}
-
-
-void TrackBall::resolution(const uint8_t newRes)
-{
-    if (newRes != EEPROM.read(REG_Configuration_I))
+    if (res != EEPROM.read(REG_Configuration_I))
     {
-        EEPROM.write(REG_Configuration_I, newRes);
-        digitalWrite(ncs_, LOW);
-        adnsWriteReg(REG_Configuration_I, newRes);
-        digitalWrite(ncs_, HIGH);
+        EEPROM.write(REG_Configuration_I, res);
+        moveRes_ = res;
+        resolution(res);
     }
 }
 
 
-bool TrackBall::move()
+bool TrackBall::moveOrScroll(const bool moving)
 {
+    // Check if pointer movement or scrolling is selected
+    // and change resolution accordingly
+    if (moving_ != moving)
+    {
+        moving_ = moving;
+        resolution(moving_ ? moveRes_ : scrollRes_);
+    }
+
     if (moved_)
     {
         moved_ = false;
         int xy[2];
         adnsBurstMotion(xy);
-        Mouse.move(-xy[1],-xy[0]);
+
+        if (moving_)
+        {
+            Mouse.move(-xy[1],-xy[0]);
+        }
+        else
+        {
+            Mouse.scroll(-xy[0]);
+        }
 
         return true;
     }
 
+    return false;
+}
+
+
+bool TrackBall::readConfiguration()
+{
     if (Serial.available() >= 3)
     {
         uint8_t regptr = Serial.read();
@@ -240,10 +271,13 @@ bool TrackBall::move()
         {
             EEPROM.write(regptr, value);
             configure();
-        } else
+            return true;
+        }
+        else
         {
             // Discard any buffered input
             usb_serial_flush_input();
+            return false;
         }
     }
 
