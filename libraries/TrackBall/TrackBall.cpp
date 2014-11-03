@@ -12,8 +12,6 @@
 
 void TrackBall::adnsBurstMotion(int *xy)
 {
-    uint8_t data[6];
-
     adnsComBegin();
 
     // Send adress of the register, with MSBit = 0 to indicate it's a read
@@ -23,6 +21,7 @@ void TrackBall::adnsBurstMotion(int *xy)
     delayMicroseconds(100);
 
     // Read data
+    uint8_t data[6];
     spi4teensy3::receive(data, 6);
 
     xy[0] = (data[3] << 8) | data[2];
@@ -105,15 +104,14 @@ void TrackBall::adnsUploadFirmware()
     // Write the SROM file (=firmware data)
     adnsComBegin();
 
-    // write burst destination address
+    // Write burst destination address
     spi4teensy3::send(REG_SROM_Load_Burst | 0x80);
     delayMicroseconds(15);
 
     // Send all bytes of the firmware
-    unsigned char c;
     for(int i=0; i<firmwareLength; i++)
     {
-        c = (unsigned char)pgm_read_byte(firmwareData + i);
+        unsigned char c = pgm_read_byte(firmwareData + i);
         spi4teensy3::send(c);
         delayMicroseconds(15);
     }
@@ -213,7 +211,7 @@ void TrackBall::wake()
 
     configure();
 
-    debugln("Optical Chip Initialized");
+    debugln("ADNS-9800 Initialized");
 }
 
 
@@ -267,6 +265,8 @@ bool TrackBall::readConfiguration()
         uint8_t regptr = Serial.read();
         uint8_t value = Serial.read();
         uint8_t check = Serial.read();
+
+        // Simple parity check of the data provided
         if ((regptr ^ value) == check)
         {
             EEPROM.write(regptr, value);

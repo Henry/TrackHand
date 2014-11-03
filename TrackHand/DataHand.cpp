@@ -51,10 +51,13 @@ int main(void)
 
     while (1)
     {
+        // Put into power-save mode when keys are not pressed
+        // or trackball not moved for some time
         powerSave
         (
             // Check for key presses
             keyMatrix.keysPressed()
+
             // Check for pointer motion and move or scroll
          || trackBall.moveOrScroll(!keyMatrix.scroll())
         );
