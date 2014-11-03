@@ -206,6 +206,12 @@ public:
         //- Wake after sleep
         void wake();
 
+        //- Read and update configuration from USB serial device
+        bool readConfiguration()
+        {
+            return true;
+        }
+
         //- Scan matrix and send the pressed keys
         bool keysPressed();
 

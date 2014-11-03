@@ -271,12 +271,14 @@ bool TrackBall::readConfiguration()
         {
             EEPROM.write(regptr, value);
             configure();
+            Serial.println("TrackBall::readConfiguration() successful");
             return true;
         }
         else
         {
             // Discard any buffered input
             usb_serial_flush_input();
+            Serial.println("TrackBall::readConfiguration() failed");
             return false;
         }
     }

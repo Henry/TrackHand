@@ -62,6 +62,13 @@ int main(void)
          || trackBall.moveOrScroll(!keyMatrix.scroll())
         );
 
+        if (Serial.available())
+        {
+            keyMatrix.readConfiguration();
+            trackBall.readConfiguration();
+            powerSave.readConfiguration();
+        }
+
         keyMatrix.pause();
     }
 
