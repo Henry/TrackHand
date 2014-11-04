@@ -241,6 +241,10 @@ bool TrackBall::moveOrScroll(const bool moving)
 
         if (moving)
         {
+            // Clip the movement to -128 to 127 per call
+            // It would be possible to accumulate the overflow
+            // and apply subsequently but limiting the speed by clipping as
+            // is done here might be better anyway.
             Mouse.move(clip8(-xy[1]), clip8(-xy[0]));
         }
         else
@@ -255,8 +259,14 @@ bool TrackBall::moveOrScroll(const bool moving)
                 scrollCount_ = 0;
             }
 
+            // Accumulate the scroll motion
             scrollCount_ -= xy[0];
+
+            // Divide and clip the scroll motion before sending
             Mouse.scroll(clip8(scrollCount_/scrollDivider_));
+
+            // Reduce the scroll count according to that sent
+            // ignoring the clipping to limit scroll-speed
             scrollCount_ %= scrollDivider_;
         }
 
