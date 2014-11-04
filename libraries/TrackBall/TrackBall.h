@@ -18,9 +18,10 @@
 
 class TrackBall
 {
+    //- Configure from parameters stored in EEPROM
     void configure();
 
-    void adnsBurstMotion(int16_t *xy);
+    void adnsBurstMotion(int16_t xy[2]);
     uint8_t adnsReadReg(uint8_t reg_addr);
     void adnsWriteReg(uint8_t reg_addr, uint8_t data);
     void adnsUploadFirmware();
@@ -35,6 +36,7 @@ class TrackBall
         digitalWrite(ncs_, HIGH);
     }
 
+    //- SPI device select pin
     const uint8_t ncs_ = SS;
 
     //- Motion interupt pin
@@ -43,11 +45,18 @@ class TrackBall
     //- Scroll divider reduce the scroll speed relative to the pointer motion.
     uint8_t scrollDivider_ = 50;
 
+    //- Structure representing the storage of the parameters in EEPROM
+    struct parameters
+    {
+        uint8_t resolution;
+        uint8_t scrollDivider;
+    };
+
     //- Current scroll counter used with scrollDivider_ to reduce scroll speed
     int16_t scrollCount_ = 0;
 
     //- Change the resolution for movement or scroll
-    void resolution(const uint8_t res);
+    void setResolution(const uint8_t res);
 
     //- Moved indicator has to be a static member
     //  as it is used in...
@@ -77,7 +86,10 @@ public:
         bool readConfiguration();
 
         //- Change and save the pointer movement resolution
-        void moveResolution(const uint8_t res);
+        void resolution(const uint8_t res);
+
+        //- Change and save the scroll divider
+        void scrollDivider(const uint8_t sdiv);
 
         //- If data is present move the pointer (if move = true)
         //  or scroll the screen (if move = false) and return true

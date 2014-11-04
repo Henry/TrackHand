@@ -6,11 +6,30 @@
 #include "debug.h"
 #include "ADNS9800_SROM_A6.h"
 #include <spi4teensy3.h>
-#include <EEPROM.h>
 
 // -----------------------------------------------------------------------------
 
-void TrackBall::adnsBurstMotion(int16_t *xy)
+#define TRACKBALL_EEPROM_OFFSET 0
+
+#define PROP_ADDR(x) \
+    TRACKBALL_EEPROM_OFFSET + offsetof(TrackBall::parameters, x)
+
+void saveProp0(const uint address, const uint8_t val)
+{
+    if (val != eeprom_read_byte((uint8_t*)address))
+    {
+        eeprom_write_byte((uint8_t*)address, val);
+    }
+}
+
+#define getProp(property) \
+    eeprom_read_byte((uint8_t*)PROP_ADDR(property))
+
+#define setProp(property, val) \
+    saveProp0(PROP_ADDR(property), val)
+
+
+void TrackBall::adnsBurstMotion(int16_t xy[2])
 {
     adnsComBegin();
 
@@ -24,6 +43,7 @@ void TrackBall::adnsBurstMotion(int16_t *xy)
     uint8_t data[6];
     spi4teensy3::receive(data, 6);
 
+    // Construct the 16-bit x and y motion deltas
     xy[0] = (data[3] << 8) | data[2];
     xy[1] = (data[5] << 8) | data[4];
 
@@ -106,10 +126,11 @@ void TrackBall::adnsUploadFirmware()
 
     // Write burst destination address
     spi4teensy3::send(REG_SROM_Load_Burst | 0x80);
+
     delayMicroseconds(15);
 
     // Send all bytes of the firmware
-    for(int i=0; i<firmwareLength; i++)
+    for (int i=0; i<firmwareLength; i++)
     {
         unsigned char c = pgm_read_byte(firmwareData + i);
         spi4teensy3::send(c);
@@ -123,11 +144,12 @@ void TrackBall::adnsUploadFirmware()
 void TrackBall::configure()
 {
     // Initialise the movement resolution from the value in EEPROM
-    resolution(EEPROM.read(REG_Configuration_I));
+    setResolution(getProp(resolution));
+    scrollDivider_ = getProp(scrollDivider);
 }
 
 
-void TrackBall::resolution(const uint8_t res)
+void TrackBall::setResolution(const uint8_t res)
 {
     digitalWrite(ncs_, LOW);
     adnsWriteReg(REG_Configuration_I, res);
@@ -135,7 +157,21 @@ void TrackBall::resolution(const uint8_t res)
 }
 
 
-volatile bool TrackBall::moved_ = true;
+void TrackBall::resolution(const uint8_t res)
+{
+    setProp(resolution, res);
+    setResolution(res);
+}
+
+
+void TrackBall::scrollDivider(const uint8_t sdiv)
+{
+    setProp(scrollDivider, sdiv);
+    scrollDivider_ = sdiv;
+}
+
+
+volatile bool TrackBall::moved_ = false;
 
 
 void TrackBall::moved()
@@ -213,16 +249,7 @@ void TrackBall::wake()
 }
 
 
-void TrackBall::moveResolution(const uint8_t res)
-{
-    if (res != EEPROM.read(REG_Configuration_I))
-    {
-        EEPROM.write(REG_Configuration_I, res);
-        resolution(res);
-    }
-}
-
-
+// Clip a 16bit integer to an 8bit integer
 inline int8_t clip8(int16_t y)
 {
     if (y > INT8_MAX) return INT8_MAX;
@@ -235,7 +262,10 @@ bool TrackBall::moveOrScroll(const bool moving)
 {
     if (moved_)
     {
+        // Reset the interrupt flag
         moved_ = false;
+
+        // Read the ball motion from the ADNS-9800
         int16_t xy[2];
         adnsBurstMotion(xy);
 
@@ -279,17 +309,18 @@ bool TrackBall::moveOrScroll(const bool moving)
 
 bool TrackBall::readConfiguration()
 {
-    if (Serial.available() >= 3)
+    if (Serial.available() >= 4)
     {
         uint8_t regptr = Serial.read();
-        uint8_t value = Serial.read();
+        uint8_t res = Serial.read();
+        uint8_t sdiv = Serial.read();
         uint8_t check = Serial.read();
 
         // Simple parity check of the data provided
-        if ((regptr ^ value) == check)
+        if ((regptr ^ res ^ sdiv) == check)
         {
-            EEPROM.write(regptr, value);
-            configure();
+            resolution(res);
+            scrollDivider(sdiv);
             Serial.println("TrackBall::readConfiguration() successful");
             return true;
         }
