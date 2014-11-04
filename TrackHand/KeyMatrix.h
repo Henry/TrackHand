@@ -131,7 +131,7 @@ class KeyMatrix
         const uint16_t columnStabTime_ = 100;
 
         //- Matrix scan loop delay time (ms)
-        const uint16_t loopDelayTime_ = 10;
+        const uint16_t loopDelayTime_ = 5;
 
         //- Current mode
         const Mode *currentMode_;

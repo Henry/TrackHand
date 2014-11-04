@@ -20,7 +20,7 @@ class TrackBall
 {
     void configure();
 
-    void adnsBurstMotion(int *xy);
+    void adnsBurstMotion(int16_t *xy);
     uint8_t adnsReadReg(uint8_t reg_addr);
     void adnsWriteReg(uint8_t reg_addr, uint8_t data);
     void adnsUploadFirmware();
@@ -40,14 +40,11 @@ class TrackBall
     //- Motion interupt pin
     const uint8_t mot_ = 9;
 
-    //- Current mode, pointer movement or scroll
-    bool moving_ = true;
+    //- Scroll divider reduce the scroll speed relative to the pointer motion.
+    uint8_t scrollDivider_ = 50;
 
-    //- Current pointer movement resolution
-    uint8_t moveRes_ = 10;
-
-    //- Current scroll resolution
-    uint8_t scrollRes_ = 1;
+    //- Current scroll counter used with scrollDivider_ to reduce scroll speed
+    int16_t scrollCount_ = 0;
 
     //- Change the resolution for movement or scroll
     void resolution(const uint8_t res);

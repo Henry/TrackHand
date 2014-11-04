@@ -10,7 +10,7 @@
 
 // -----------------------------------------------------------------------------
 
-void TrackBall::adnsBurstMotion(int *xy)
+void TrackBall::adnsBurstMotion(int16_t *xy)
 {
     adnsComBegin();
 
@@ -122,7 +122,8 @@ void TrackBall::adnsUploadFirmware()
 
 void TrackBall::configure()
 {
-    adnsWriteReg(REG_Configuration_I, EEPROM.read(REG_Configuration_I));
+    // Initialise the movement resolution from the value in EEPROM
+    resolution(EEPROM.read(REG_Configuration_I));
 }
 
 
@@ -149,9 +150,6 @@ TrackBall::TrackBall()
 
 void TrackBall::begin()
 {
-    // Initialise the movement resolution from the value in EEPROM
-    moveRes_ = EEPROM.read(REG_Configuration_I);
-
     // Setup SPI pins and interrupt for optical sensor
     pinMode(ncs_, OUTPUT);
     pinMode(mot_, INPUT);
@@ -220,35 +218,46 @@ void TrackBall::moveResolution(const uint8_t res)
     if (res != EEPROM.read(REG_Configuration_I))
     {
         EEPROM.write(REG_Configuration_I, res);
-        moveRes_ = res;
         resolution(res);
     }
 }
 
 
+inline int8_t clip8(int16_t y)
+{
+    if (y > INT8_MAX) return INT8_MAX;
+    if (y < INT8_MIN) return INT8_MIN;
+    return y;
+}
+
+
 bool TrackBall::moveOrScroll(const bool moving)
 {
-    // Check if pointer movement or scrolling is selected
-    // and change resolution accordingly
-    if (moving_ != moving)
-    {
-        moving_ = moving;
-        resolution(moving_ ? moveRes_ : scrollRes_);
-    }
-
     if (moved_)
     {
         moved_ = false;
-        int xy[2];
+        int16_t xy[2];
         adnsBurstMotion(xy);
 
-        if (moving_)
+        if (moving)
         {
-            Mouse.move(-xy[1],-xy[0]);
+            Mouse.move(clip8(-xy[1]), clip8(-xy[0]));
         }
         else
         {
-            Mouse.scroll(-xy[0]);
+            // Reset scroll counter if direction changes
+            if
+            (
+                (xy[0] > 0 && scrollCount_ > 0)
+             || (xy[0] < 0 && scrollCount_ < 0)
+            )
+            {
+                scrollCount_ = 0;
+            }
+
+            scrollCount_ -= xy[0];
+            Mouse.scroll(clip8(scrollCount_/scrollDivider_));
+            scrollCount_ %= scrollDivider_;
         }
 
         return true;
