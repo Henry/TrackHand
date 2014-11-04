@@ -1,12 +1,19 @@
 // -----------------------------------------------------------------------------
 /// Title: Interface for the ADNS9800 laser sensor
 ///  Description:
-//    This class is based on the Teensy interface for the ADNS-9800 provided by
+//    Class based on the Teensy interface for the ADNS-9800 provided by
 //    John Kicklighter:
 //      https://github.com/mrjohnk/ADNS-9800.git
 //      https://github.com/mrjohnk/Trackball2.git
 //    with updates for the Teensy-3.1 from
 //      https://github.com/pepijndevos/Dwergmuis
+//
+//    Added support for low-power sleep mode.
+//    Added scroll-wheel emulation mode selected by e.g. a modifier key.
+//
+//    Both the pointer motion resolution and scroll divider are
+//    configurable by sending the new values via USB serial and stored in
+//    EEPROM.
 // -----------------------------------------------------------------------------
 
 #ifndef TrackBall_H
@@ -43,7 +50,7 @@ class TrackBall
     const uint8_t mot_ = 9;
 
     //- Scroll divider reduce the scroll speed relative to the pointer motion.
-    uint8_t scrollDivider_ = 50;
+    uint8_t scrollDivider_;
 
     //- Structure representing the storage of the parameters in EEPROM
     struct parameters

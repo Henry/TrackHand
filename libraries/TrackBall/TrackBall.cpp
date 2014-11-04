@@ -14,7 +14,7 @@
 #define PROP_ADDR(x) \
     TRACKBALL_EEPROM_OFFSET + offsetof(TrackBall::parameters, x)
 
-void saveProp0(const uint address, const uint8_t val)
+void saveProp(const uint address, const uint8_t val)
 {
     if (val != eeprom_read_byte((uint8_t*)address))
     {
@@ -26,7 +26,7 @@ void saveProp0(const uint address, const uint8_t val)
     eeprom_read_byte((uint8_t*)PROP_ADDR(property))
 
 #define setProp(property, val) \
-    saveProp0(PROP_ADDR(property), val)
+    saveProp(PROP_ADDR(property), val)
 
 
 void TrackBall::adnsBurstMotion(int16_t xy[2])
