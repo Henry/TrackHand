@@ -77,12 +77,6 @@ public:
         //- Put KeyMatrix and TrackBall to sleep and Teensy 3.1 into deep sleep
         void sleep();
 
-        //- Read and update configuration from USB serial device
-        bool readConfiguration()
-        {
-            return true;
-        }
-
         //- Check if anything has changed and reset sleep counter
         void operator()(const bool changed);
 };

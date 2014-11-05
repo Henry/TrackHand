@@ -14,13 +14,7 @@
 #define PROP_ADDR(x) \
     TRACKBALL_EEPROM_OFFSET + offsetof(TrackBall::parameters, x)
 
-void saveProp(const uint address, const uint8_t val)
-{
-    if (val != eeprom_read_byte((uint8_t*)address))
-    {
-        eeprom_write_byte((uint8_t*)address, val);
-    }
-}
+void saveProp(const uint address, const uint8_t val);
 
 #define getProp(property) \
     eeprom_read_byte((uint8_t*)PROP_ADDR(property))
@@ -301,36 +295,6 @@ bool TrackBall::moveOrScroll(const bool moving)
         }
 
         return true;
-    }
-
-    return false;
-}
-
-
-bool TrackBall::readConfiguration()
-{
-    if (Serial.available() >= 4)
-    {
-        uint8_t regptr = Serial.read();
-        uint8_t res = Serial.read();
-        uint8_t sdiv = Serial.read();
-        uint8_t check = Serial.read();
-
-        // Simple parity check of the data provided
-        if ((regptr ^ res ^ sdiv) == check)
-        {
-            resolution(res);
-            scrollDivider(sdiv);
-            Serial.println("TrackBall::readConfiguration() successful");
-            return true;
-        }
-        else
-        {
-            // Discard any buffered input
-            usb_serial_flush_input();
-            Serial.println("TrackBall::readConfiguration() failed");
-            return false;
-        }
     }
 
     return false;

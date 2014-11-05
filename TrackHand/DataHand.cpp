@@ -42,6 +42,14 @@ TrackBall trackBall;
 // Construct the power-saving mode for the keyboard and trackball
 PowerSave powerSave(keyMatrix, trackBall);
 
+void saveProp(const uint address, const uint8_t val)
+{
+    if (val != eeprom_read_byte((uint8_t*)address))
+    {
+        eeprom_write_byte((uint8_t*)address, val);
+    }
+}
+
 
 int main(void)
 {
@@ -64,9 +72,56 @@ int main(void)
 
         if (Serial.available())
         {
-            keyMatrix.readConfiguration();
-            trackBall.readConfiguration();
-            powerSave.readConfiguration();
+            uint8_t command = Serial.read();
+
+            switch (command)
+            {
+                case 0:
+                    if (Serial.available() >= 1)
+                    {
+                        // Read the value at the address provided
+                        uint addr = Serial.read();
+                        uint8_t value = eeprom_read_byte((uint8_t*)addr);
+
+                        // Write the value back
+                        Serial.write(value);
+                    }
+                    else
+                    {
+                        // Discard any buffered input
+                        usb_serial_flush_input();
+                        Serial.println("TrackHand: getting value failed");
+                    }
+                    break;
+
+                case 1:
+                    if (Serial.available() >= 3)
+                    {
+                        uint addr = Serial.read();
+                        uint8_t value = Serial.read();
+                        uint8_t check = Serial.read();
+
+                        // Simple parity check of the data provided
+                        if ((addr ^ value) == check)
+                        {
+                            saveProp(addr, value);
+                            Serial.print("TrackHand: setting value at address ");
+                            Serial.print(addr);
+                            Serial.print(" to ");
+                            Serial.print(value);
+                            Serial.println(" successful");
+
+                            trackBall.configure();
+                        }
+                        else
+                        {
+                            // Discard any buffered input
+                            usb_serial_flush_input();
+                            Serial.println("TrackHand: setting value failed");
+                        }
+                    }
+                    break;
+            }
         }
 
         keyMatrix.pause();

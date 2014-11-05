@@ -25,9 +25,6 @@
 
 class TrackBall
 {
-    //- Configure from parameters stored in EEPROM
-    void configure();
-
     void adnsBurstMotion(int16_t xy[2]);
     uint8_t adnsReadReg(uint8_t reg_addr);
     void adnsWriteReg(uint8_t reg_addr, uint8_t data);
@@ -89,8 +86,8 @@ public:
         //- Wake after sleep
         void wake();
 
-        //- Read and update configuration from USB serial device
-        bool readConfiguration();
+        //- Configure from parameters stored in EEPROM
+        void configure();
 
         //- Change and save the pointer movement resolution
         void resolution(const uint8_t res);
