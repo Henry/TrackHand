@@ -115,35 +115,26 @@ int port(const char* ttyName)
 }
 
 
-template<typename Type>
-void getValue(const int fd, const int addr)
+void print(const int fd)
 {
-    char buf[2] = {0, addr};
-    int n = write(fd, buf, 2);
-    if (n < 0)
-    {
-        cerr<< "thconf::getValue: failed to send address" << endl;
-    }
-    else
-    {
-        cout<< "thconf::getValue: succeed to send address" << endl;
-    }
-
     // Need large delay between send and receive
     usleep(50000);
 
-    Type val;
-    n = read(fd, &val, sizeof(Type));
+    while(1)
+    {
+        char c;
+        int n = read(fd, &c, 1);
 
-    if (n == -1)
-    {
-        cerr<< "thconf::getValue: failed to receive value - "
-            << std::strerror(errno) << endl;
-    }
-    else
-    {
-        cout<< "thconf::getValue: value at address "
-            << addr << " = " << val << endl;
+        if (n == -1)
+        {
+            cerr<< "thconf::print: failed to receive value - "
+                << std::strerror(errno) << endl;
+            std::exit(errno);
+        }
+        else
+        {
+            cout<< c;
+        }
     }
 }
 
@@ -256,6 +247,7 @@ int main(int argc, char * const *argv)
 
             case 'p':   // -p or --print
                 sendCommand(port(ttyName), opt);
+                print(port(ttyName));
                 break;
 
             case 'r':   // -r <val> or --resolution <val>
