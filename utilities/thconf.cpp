@@ -193,7 +193,7 @@ void printUsage(std::ostream& os, int exitCode)
     os <<
         "  -h  --help               Print this usage information.\n"
         "  -d  --dev <name>         Name of the serial device used to communicate with the TrackHand.\n"
-        "  -p                       Request that the TrackHand prints the current configuration.\n"
+        "  -p  --print              Request that the TrackHand prints the current configuration.\n"
         "  -r  --resolution <val>   Set the pointer motion resolution in increments of 50cpi in range 1-168.\n"
         "  -s  --scroll <val>       Set the scroll divider to reduce the scroll speed.\n"
         "  -t  --timeout <val>      Time of inactivity after which power saving is enabled.\n"

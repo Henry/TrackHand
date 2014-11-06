@@ -20,10 +20,6 @@ TEENSY = 31
 # Set to 24000000, 48000000, or 96000000 to set CPU core speed
 TEENSY_CORE_SPEED = 48000000
 
-# Some libraries will require this to be defined
-# If you define this, you will break the default main.cpp
-#ARDUINO = 105
-
 # configurable options
 OPTIONS = -DUSB_SERIAL_HID -DLAYOUT_US_ENGLISH
 # -DDEBUG
@@ -39,15 +35,6 @@ BUILDDIR = $(abspath $(CURDIR)/build)
 
 # path location for Teensy Loader, teensy_post_compile and teensy_reboot
 TOOLSPATH = $(CURDIR)/tools
-
-ifeq ($(OS),Windows_NT)
-    $(error What is Win Dose?)
-else
-    UNAME_S := $(shell uname -s)
-    ifeq ($(UNAME_S),Darwin)
-        TOOLSPATH = /Applications/Arduino.app/Contents/Resources/Java/hardware/tools/
-    endif
-endif
 
 # path location for Teensy 3 core
 COREPATH = teensy3
@@ -68,9 +55,6 @@ CPPFLAGS = -Wall -g -Os -mcpu=cortex-m4 -mthumb -nostdlib -MMD $(OPTIONS) \
 
 # compiler options for C++ only
 CXXFLAGS = -std=gnu++0x -felide-constructors -fno-exceptions -fno-rtti -Wno-narrowing -Wno-overflow
-
-# compiler options for C only
-CFLAGS =
 
 # compiler options specific to teensy version
 ifeq ($(TEENSY), 30)
@@ -111,16 +95,16 @@ TC_FILES := $(wildcard $(COREPATH)/*.c)
 TCPP_FILES := $(wildcard $(COREPATH)/*.cpp)
 C_FILES := $(wildcard $(PROGRAM)/*.c)
 CPP_FILES := $(wildcard $(PROGRAM)/*.cpp)
-INO_FILES := $(wildcard $(PROGRAM)/*.ino)
 
 # include paths for libraries
 L_INC := $(foreach lib,$(filter %/, $(wildcard $(LIBRARYPATH)/*/)), -I$(lib))
 
 SOURCES := $(C_FILES:.c=.o) $(CPP_FILES:.cpp=.o) \
-    $(INO_FILES:.ino=.o) $(TC_FILES:.c=.o) $(TCPP_FILES:.cpp=.o) $(LC_FILES:.c=.o) $(LCPP_FILES:.cpp=.o)
+    $(TC_FILES:.c=.o) $(TCPP_FILES:.cpp=.o) $(LC_FILES:.c=.o) $(LCPP_FILES:.cpp=.o)
+
 OBJS := $(foreach src,$(SOURCES), $(BUILDDIR)/$(src))
 
-all: hex
+all: hex thconf
 
 build: $(TARGET).elf
 
@@ -141,17 +125,12 @@ upload: post_compile reboot
 $(BUILDDIR)/%.o: %.c
 	@echo "[CC]\t$<"
 	@mkdir -p "$(dir $@)"
-	@$(CC) $(CPPFLAGS) $(CFLAGS) $(L_INC) -o "$@" -c "$<"
+	@$(CC) $(CPPFLAGS) $(L_INC) -o "$@" -c "$<"
 
 $(BUILDDIR)/%.o: %.cpp
 	@echo "[CXX]\t$<"
 	@mkdir -p "$(dir $@)"
 	@$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(L_INC) -o "$@" -c "$<"
-
-$(BUILDDIR)/%.o: %.ino
-	@echo "[CXX]\t$<"
-	@mkdir -p "$(dir $@)"
-	@$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(L_INC) -o "$@" -x c++ -include Arduino.h -c "$<"
 
 $(TARGET).elf: $(OBJS) $(LDSCRIPT)
 	@echo "[LD]\t$@"
@@ -162,12 +141,16 @@ $(TARGET).elf: $(OBJS) $(LDSCRIPT)
 	@$(SIZE) "$<"
 	@$(OBJCOPY) -O ihex -R .eeprom "$<" "$@"
 
+thconf: utilities/thconf.cpp
+	@echo "[CXX]\t$<"
+	@g++ $(CXXFLAGS) -o "$@" "$<"
+
 # compiler generated dependency info
 -include $(OBJS:.o=.d)
 
 clean:
 	@echo Cleaning...
 	@rm -rf "$(BUILDDIR)"
-	@rm -f "$(TARGET).elf" "$(TARGET).hex"
+	@rm -f "$(TARGET).elf" "$(TARGET).hex" thconf
 
 ###-----------------------------------------------------------------------------

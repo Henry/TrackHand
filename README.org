@@ -330,3 +330,16 @@
     VERY different.  I set the keyboard to =USA dvorak= and found that the
     tutorials corresponded well to the layout of keys for both the alphabetic
     characters and reasonably well to the symbols.
+* =thconf= CLI TrackHand Configuration Utility
+  =thconf= is a simple command-line utility provided to configure the
+  TrackHand.  It is complied using the =Makefile= in the TrackHand directory and
+  provides the following options:
+  #+begin_example
+  Usage: thconf [OPTION]...
+  -h  --help               Print this usage information.
+  -d  --dev <name>         Name of the serial device used to communicate with the TrackHand.
+  -p  --print              Request that the TrackHand prints the current configuration.
+  -r  --resolution <val>   Set the pointer motion resolution in increments of 50cpi in range 1-168.
+  -s  --scroll <val>       Set the scroll divider to reduce the scroll speed.
+  -t  --timeout <val>      Time of inactivity after which power saving is enabled.
+  #+end_example
