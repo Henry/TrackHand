@@ -36,37 +36,48 @@
 
 class PowerSave
 {
-    //- Pin used to wake from power-saving sleep
-    const uint8_t wakePin_ = 33;
+    // Private data
 
-    //- Pin used to wake from power-saving sleep
-    const uint8_t wakeGPIOPin_ = PIN_33;
+        //- Pin used to wake from power-saving sleep
+        const uint8_t wakePin_ = 33;
 
-    //- Static pointer to the keyMatrix needed by the restart() callback
-    static KeyMatrix* keyMatrixPtr;
+        //- Pin used to wake from power-saving sleep
+        const uint8_t wakeGPIOPin_ = PIN_33;
 
-    //- Static pointer to the trackBall needed by the restart() callback
-    static TrackBall* trackBallPtr;
+        //- Static pointer to the keyMatrix needed by the restart() callback
+        static KeyMatrix* keyMatrixPtr;
 
-    //- Timeout (s)
-    const uint16_t timeout_ = 1200;
+        //- Static pointer to the trackBall needed by the restart() callback
+        static TrackBall* trackBallPtr;
 
-    //- Iteration time (ms)
-    const uint16_t iterTime_ = 30;
+        //- Timeout (s)
+        uint16_t timeout_;
 
-    //- Power controller
-    TEENSY3_LP powerControl_;
+        //- Iteration time (ms)
+        const uint16_t iterTime_ = 30;
 
-    //- Time counter
-    uint32_t idleCount_ = 0;
+        //- Power controller
+        TEENSY3_LP powerControl_;
 
-    static void wake();
+        //- Time counter
+        uint32_t idleCount_ = 0;
+
+        static void wake();
+
+        //- Structure representing the storage of the parameters in EEPROM
+        struct parameters
+        {
+            uint16_t timeout;
+        };
+
+        //- Start of the EEPROM storage for the configuration parameters
+        ptrdiff_t eepromStart_;
 
 
 public:
 
     //- Constructor
-    PowerSave(KeyMatrix& km, TrackBall& tb);
+    PowerSave(KeyMatrix& km, TrackBall& tb, const ptrdiff_t eepromStart);
 
 
     // Member functions
@@ -76,6 +87,12 @@ public:
 
         //- Put KeyMatrix and TrackBall to sleep and Teensy 3.1 into deep sleep
         void sleep();
+
+        //- Configure from parameters stored in EEPROM
+        void configure();
+
+        //- Configure parameters stored in EEPROM from Serial
+        bool configure(const char cmd);
 
         //- Check if anything has changed and reset sleep counter
         void operator()(const bool changed);

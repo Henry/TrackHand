@@ -29,6 +29,7 @@
 #include <cerrno>
 #include <cstring>
 #include <cstdlib>
+#include <stdint.h>
 
 #include <unistd.h>  // UNIX standard function definitions
 #include <fcntl.h>   // File control definitions
@@ -49,7 +50,7 @@ int openSerialPort(const char* ttyName)
     if (fd == -1)
     {
         // Could not open the port.
-        cerr<< "openPort: Unable to open " << ttyName << " - "
+        cerr<< "thconf::openSerialPort: Unable to open " << ttyName << " - "
             << std::strerror(errno) << endl;
         std::exit(errno);
     }
@@ -57,8 +58,6 @@ int openSerialPort(const char* ttyName)
     {
         fcntl(fd, F_SETFL, FNDELAY);
     }
-
-    // cout<< "Opened port to " << ttyName << " with descriptor " << fd << endl;
 
     // Read the configuration of the port
     struct termios options;
@@ -89,7 +88,8 @@ int openSerialPort(const char* ttyName)
     // Set the new options for the port
     if (tcsetattr(fd, TCSANOW, &options) == -1)
     {
-        cerr<< "Error with tcsetattr - " << std::strerror(errno) << endl;
+        cerr<< "thconf::openSerialPort: Error with tcsetattr - "
+            << std::strerror(errno) << endl;
         std::exit(errno);
     }
 
@@ -115,49 +115,59 @@ int port(const char* ttyName)
 }
 
 
-void getValue(const int fd, const char addr)
+template<typename Type>
+void getValue(const int fd, const int addr)
 {
     char buf[2] = {0, addr};
     int n = write(fd, buf, 2);
     if (n < 0)
     {
-        cerr<< "getValue failed to send address" << endl;
+        cerr<< "thconf::getValue: failed to send address" << endl;
     }
     else
     {
-        cout<< "getValue succeed to send address" << endl;
+        cout<< "thconf::getValue: succeed to send address" << endl;
     }
 
     // Need large delay between send and receive
     usleep(50000);
 
-    char val;
-    n = read(fd, &val, 1);
+    Type val;
+    n = read(fd, &val, sizeof(Type));
 
     if (n == -1)
     {
-        cerr<< "getValue failed to receive value - "
+        cerr<< "thconf::getValue: failed to receive value - "
             << std::strerror(errno) << endl;
     }
     else
     {
-        cout<< "getValue: value at address "
-            << addr << " = " << int(val) << endl;
+        cout<< "thconf::getValue: value at address "
+            << addr << " = " << val << endl;
     }
 }
 
 
-void setValue(const int fd, const char addr, const char val)
+template<typename Type>
+void setValue(const int fd, const char cmd, const Type val)
 {
-    char buf[4] = {1, addr, val, addr ^ val};
-    int n = write(fd, buf, 4);
+    const uint8_t nb = 1 + 2*sizeof(Type);
+    char buf[nb];
+    Type check = cmd ^ val;
+
+    buf[0] = cmd;
+    std::memcpy(buf+1, (void *)(&val), sizeof(Type));
+    std::memcpy(buf+1+sizeof(Type), (void *)(&check), sizeof(Type));
+
+    int n = write(fd, buf, nb);
+
     if (n < 0)
     {
-        cerr<< "setValue failed" << endl;
+        cerr<< "thconf::setValue: setting " << val << " failed" << endl;
     }
     else
     {
-        cout<< "setValue succeed" << endl;
+        cout<< "thconf::setValue: setting " << val << " succeed" << endl;
     }
 }
 
@@ -184,7 +194,7 @@ int main(int argc, char * const *argv)
     const char *programName = argv[0];
 
     // A string listing valid short options letters.
-    const char* const shortOptions = "hp:r:s:t:k:";
+    const char* const shortOptions = "hd:p:r:s:t:k:";
 
     // An array describing valid long options.
     const struct option longOptions[] =
@@ -229,19 +239,20 @@ int main(int argc, char * const *argv)
                 break;
 
             case 'p':   // -p <val> or --print <val>
-                getValue(port(ttyName), atoi(optarg));
+                // Not implemented yet
+                // getValue<uint8_t>(port(ttyName), atoi(optarg));
                 break;
 
             case 'r':   // -r <val> or --resolution <val>
-                setValue(port(ttyName), 0, atoi(optarg));
+                setValue(port(ttyName), nextOption, uint8_t(atoi(optarg)));
                 break;
 
             case 's':   // -s <val> or --scroll <val>
-                setValue(port(ttyName), 1, atoi(optarg));
+                setValue(port(ttyName), nextOption, uint8_t(atoi(optarg)));
                 break;
 
             case 't':   // -t <val> or --timeout <val>
-                // Not implemented yet
+                setValue(port(ttyName), nextOption, uint16_t(atoi(optarg)));
                 break;
 
             case 'k':   // -k <file> or --keymap <file>

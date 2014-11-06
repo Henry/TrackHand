@@ -30,26 +30,21 @@
 #include "TrackBall.h"
 #include "PowerSave.h"
 #include "MCP23018.h"
+#include "EEPROMParameters.h"
 
 // -----------------------------------------------------------------------------
 
 // Construct the keyboard matrix
-KeyMatrix keyMatrix;
+// with the parameters stored in EEPROM starting at 0
+KeyMatrix keyMatrix(0);
 
 // Construct the trackball
-TrackBall trackBall;
+// with the parameters stored in EEPROM starting immediately after the keyMatrix
+TrackBall trackBall(keyMatrix.eepromEnd());
 
 // Construct the power-saving mode for the keyboard and trackball
-PowerSave powerSave(keyMatrix, trackBall);
-
-void saveProp(const uint address, const uint8_t val)
-{
-    if (val != eeprom_read_byte((uint8_t*)address))
-    {
-        eeprom_write_byte((uint8_t*)address, val);
-    }
-}
-
+// with the parameters stored in EEPROM starting immediately after the trackBall
+PowerSave powerSave(keyMatrix, trackBall, trackBall.eepromEnd());
 
 int main(void)
 {
@@ -74,53 +69,19 @@ int main(void)
         {
             uint8_t command = Serial.read();
 
-            switch (command)
+            bool handled = false;
+
+            handled |= keyMatrix.configure(command);
+            handled |= trackBall.configure(command);
+            handled |= powerSave.configure(command);
+
+            if (!handled)
             {
-                case 0:
-                    if (Serial.available() >= 1)
-                    {
-                        // Read the value at the address provided
-                        uint addr = Serial.read();
-                        uint8_t value = eeprom_read_byte((uint8_t*)addr);
-
-                        // Write the value back
-                        Serial.write(value);
-                    }
-                    else
-                    {
-                        // Discard any buffered input
-                        usb_serial_flush_input();
-                        Serial.println("TrackHand: getting value failed");
-                    }
-                    break;
-
-                case 1:
-                    if (Serial.available() >= 3)
-                    {
-                        uint addr = Serial.read();
-                        uint8_t value = Serial.read();
-                        uint8_t check = Serial.read();
-
-                        // Simple parity check of the data provided
-                        if ((addr ^ value) == check)
-                        {
-                            saveProp(addr, value);
-                            Serial.print("TrackHand: setting value at address ");
-                            Serial.print(addr);
-                            Serial.print(" to ");
-                            Serial.print(value);
-                            Serial.println(" successful");
-
-                            trackBall.configure();
-                        }
-                        else
-                        {
-                            // Discard any buffered input
-                            usb_serial_flush_input();
-                            Serial.println("TrackHand: setting value failed");
-                        }
-                    }
-                    break;
+                // Discard any buffered input
+                usb_serial_flush_input();
+                Serial.print("TrackHand: configuration command ");
+                Serial.print(command);
+                Serial.println(" failed");
             }
         }
 

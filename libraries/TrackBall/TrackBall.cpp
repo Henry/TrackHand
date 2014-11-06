@@ -3,25 +3,12 @@
 // -----------------------------------------------------------------------------
 
 #include "TrackBall.h"
-#include "debug.h"
 #include "ADNS9800_SROM_A6.h"
 #include <spi4teensy3.h>
+#include "EEPROMParameters.h"
+#include "debug.h"
 
 // -----------------------------------------------------------------------------
-
-#define TRACKBALL_EEPROM_OFFSET 0
-
-#define PROP_ADDR(x) \
-    TRACKBALL_EEPROM_OFFSET + offsetof(TrackBall::parameters, x)
-
-void saveProp(const uint address, const uint8_t val);
-
-#define getProp(property) \
-    eeprom_read_byte((uint8_t*)PROP_ADDR(property))
-
-#define setProp(property, val) \
-    saveProp(PROP_ADDR(property), val)
-
 
 void TrackBall::adnsBurstMotion(int16_t xy[2])
 {
@@ -137,9 +124,30 @@ void TrackBall::adnsUploadFirmware()
 
 void TrackBall::configure()
 {
-    // Initialise the movement resolution from the value in EEPROM
-    setResolution(getProp(resolution));
-    scrollDivider_ = getProp(scrollDivider);
+    // Update the movement resolution and scroll-divider
+    // from the values stored in EEPROM
+    setResolution(eepromGet(resolution));
+    scrollDivider_ = eepromGet(scrollDivider);
+}
+
+
+bool TrackBall::configure(const char cmd)
+{
+    switch (cmd)
+    {
+        case 'r':
+            eepromSetFromSerial(cmd, resolution);
+            setResolution(eepromGet(resolution));
+            return true;
+            break;
+        case 's':
+            eepromSetFromSerial(cmd, scrollDivider);
+            scrollDivider_ = eepromGet(scrollDivider);
+            return true;
+            break;
+    }
+
+    return false;
 }
 
 
@@ -153,14 +161,14 @@ void TrackBall::setResolution(const uint8_t res)
 
 void TrackBall::resolution(const uint8_t res)
 {
-    setProp(resolution, res);
+    eepromSet(resolution, res);
     setResolution(res);
 }
 
 
 void TrackBall::scrollDivider(const uint8_t sdiv)
 {
-    setProp(scrollDivider, sdiv);
+    eepromSet(scrollDivider, sdiv);
     scrollDivider_ = sdiv;
 }
 
@@ -174,7 +182,9 @@ void TrackBall::moved()
 }
 
 
-TrackBall::TrackBall()
+TrackBall::TrackBall(const ptrdiff_t eepromStart)
+:
+    eepromStart_(eepromStart)
 {}
 
 

@@ -20,6 +20,7 @@
 // -----------------------------------------------------------------------------
 
 #include "PowerSave.h"
+#include "EEPROMParameters.h"
 #include "debug.h"
 
 // -----------------------------------------------------------------------------
@@ -41,7 +42,9 @@ void PowerSave::wake()
 }
 
 
-PowerSave::PowerSave(KeyMatrix& km, TrackBall& tb)
+PowerSave::PowerSave(KeyMatrix& km, TrackBall& tb, const ptrdiff_t eepromStart)
+:
+    eepromStart_(eepromStart)
 {
     keyMatrixPtr = &km;
     trackBallPtr = &tb;
@@ -50,8 +53,8 @@ PowerSave::PowerSave(KeyMatrix& km, TrackBall& tb)
 
 void PowerSave::begin()
 {
-
     pinMode(wakePin_, INPUT_PULLUP);
+    configure();
 }
 
 
@@ -70,6 +73,28 @@ void PowerSave::sleep()
     }
 
     powerControl_.DeepSleep(GPIO_WAKE, wakeGPIOPin_, wake);
+}
+
+
+void PowerSave::configure()
+{
+    // timeout_ = 1200;
+    timeout_ = eepromGet(timeout);
+}
+
+
+bool PowerSave::configure(const char cmd)
+{
+    if (cmd == 't')
+    {
+        eepromSetFromSerial(cmd, timeout);
+        timeout_ = eepromGet(timeout);
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 
 

@@ -49,13 +49,6 @@ class TrackBall
     //- Scroll divider reduce the scroll speed relative to the pointer motion.
     uint8_t scrollDivider_;
 
-    //- Structure representing the storage of the parameters in EEPROM
-    struct parameters
-    {
-        uint8_t resolution;
-        uint8_t scrollDivider;
-    };
-
     //- Current scroll counter used with scrollDivider_ to reduce scroll speed
     int16_t scrollCount_ = 0;
 
@@ -69,11 +62,21 @@ class TrackBall
     //- The static interrupt function indicating ball motion
     static void moved();
 
+    //- Structure representing the storage of the parameters in EEPROM
+    struct parameters
+    {
+        uint8_t resolution;
+        uint8_t scrollDivider;
+    };
+
+    //- Start of the EEPROM storage for the configuration parameters
+    ptrdiff_t eepromStart_;
+
 
 public:
 
     // Constructor
-    TrackBall();
+    TrackBall(const ptrdiff_t eepromStart);
 
     // Member functions
 
@@ -88,6 +91,16 @@ public:
 
         //- Configure from parameters stored in EEPROM
         void configure();
+
+        //- Configure parameters stored in EEPROM from Serial
+        bool configure(const char cmd);
+
+        //- Return the end of the EEPROM storage
+        //  for the configuration parameters
+        ptrdiff_t eepromEnd()
+        {
+            return eepromStart_ + sizeof(parameters);
+        }
 
         //- Change and save the pointer movement resolution
         void resolution(const uint8_t res);

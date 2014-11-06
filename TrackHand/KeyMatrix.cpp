@@ -325,7 +325,7 @@ bool KeyMatrix::send()
 }
 
 
-KeyMatrix::KeyMatrix()
+KeyMatrix::KeyMatrix(const ptrdiff_t eepromStart)
 :
     leftHand_(Wire, 0),
     normalMode_(false, normalKeyMap, 31),
@@ -333,7 +333,8 @@ KeyMatrix::KeyMatrix()
     nasMode_(false, nasKeyMap, 30),
     fnMode_(true, functionKeyMap, 29),
     mouseMode_(true, functionKeyMap, 28),
-    currentMode_(normalMode_.set(NULL))
+    currentMode_(normalMode_.set(NULL)),
+    eepromStart_(eepromStart)
 {}
 
 
@@ -375,6 +376,8 @@ void KeyMatrix::begin()
 
     // Set all rows to 1
     leftHand_.write(0xffff);
+
+    configure();
 }
 
 

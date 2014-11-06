@@ -188,11 +188,19 @@ class KeyMatrix
         //- Send the pressed keys
         bool send();
 
+        //- Structure representing the storage of the parameters in EEPROM
+        struct parameters
+        {
+        };
+
+        //- Start of the EEPROM storage for the configuration parameters
+        ptrdiff_t eepromStart_;
+
 
 public:
 
     //- Constructor
-    KeyMatrix();
+    KeyMatrix(const ptrdiff_t eepromStart);
 
 
     // Member functions
@@ -205,6 +213,23 @@ public:
 
         //- Wake after sleep
         void wake();
+
+        //- Configure from parameters stored in EEPROM
+        void configure()
+        {}
+
+        //- Configure parameters stored in EEPROM from Serial
+        bool configure(const char cmd)
+        {
+            return false;
+        }
+
+        //- Return the end of the EEPROM storage
+        //  for the configuration parameters
+        ptrdiff_t eepromEnd()
+        {
+            return eepromStart_ + sizeof(parameters);
+        }
 
         //- Scan matrix and send the pressed keys
         bool keysPressed();
