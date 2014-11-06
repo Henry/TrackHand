@@ -61,10 +61,8 @@ bool eepromStoreFromSerial
     {
         Type value;
         Serial.readBytes((char *)(&value), sizeof(Type));
-        Serial.println(value);
         Type check;
         Serial.readBytes((char *)(&check), sizeof(Type));
-        Serial.println(check);
 
         // Simple parity check of the data provided
         if ((cmd ^ value) == check)

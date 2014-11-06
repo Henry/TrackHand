@@ -145,6 +145,13 @@ bool TrackBall::configure(const char cmd)
             scrollDivider_ = eepromGet(scrollDivider);
             return true;
             break;
+        case 'p':
+            Serial.print("TrackBall resolution ");
+            Serial.println(eepromGet(resolution));
+            Serial.print("TrackBall scrollDivider ");
+            Serial.println(scrollDivider_);
+            return true;
+            break;
     }
 
     return false;

@@ -148,6 +148,21 @@ void getValue(const int fd, const int addr)
 }
 
 
+void sendCommand(const int fd, const char cmd)
+{
+    int n = write(fd, &cmd, 1);
+
+    if (n < 0)
+    {
+        cerr<< "thconf::sendCommand: sending " << cmd << " failed" << endl;
+    }
+    else
+    {
+        cout<< "thconf::sendCommand: sending " << cmd << " succeed" << endl;
+    }
+}
+
+
 template<typename Type>
 void setValue(const int fd, const char cmd, const Type val)
 {
@@ -178,6 +193,7 @@ void printUsage(std::ostream& os, int exitCode)
     os <<
         "  -h  --help               Print this usage information.\n"
         "  -d  --dev <name>         Name of the serial device used to communicate with the TrackHand.\n"
+        "  -p                       Request that the TrackHand prints the current configuration.\n"
         "  -r  --resolution <val>   Set the pointer motion resolution in increments of 50cpi in range 1-168.\n"
         "  -s  --scroll <val>       Set the scroll divider to reduce the scroll speed.\n"
         "  -t  --timeout <val>      Time of inactivity after which power saving is enabled.\n"
@@ -194,7 +210,7 @@ int main(int argc, char * const *argv)
     const char *programName = argv[0];
 
     // A string listing valid short options letters.
-    const char* const shortOptions = "hd:p:r:s:t:k:";
+    const char* const shortOptions = "hd:pr:s:t:k:";
 
     // An array describing valid long options.
     const struct option longOptions[] =
@@ -211,11 +227,11 @@ int main(int argc, char * const *argv)
 
     const char* ttyName = "/dev/ttyACM0";
 
-    int nextOption;
+    int opt;
 
     do
     {
-        nextOption = getopt_long
+        opt = getopt_long
         (
             argc,
             argv,
@@ -224,7 +240,7 @@ int main(int argc, char * const *argv)
             NULL
         );
 
-        switch (nextOption)
+        switch (opt)
         {
             case 'h':   // -h or --help
                 // User has requested usage information.  Print it to standard
@@ -238,21 +254,20 @@ int main(int argc, char * const *argv)
                 ttyName = optarg;
                 break;
 
-            case 'p':   // -p <val> or --print <val>
-                // Not implemented yet
-                // getValue<uint8_t>(port(ttyName), atoi(optarg));
+            case 'p':   // -p or --print
+                sendCommand(port(ttyName), opt);
                 break;
 
             case 'r':   // -r <val> or --resolution <val>
-                setValue(port(ttyName), nextOption, uint8_t(atoi(optarg)));
+                setValue(port(ttyName), opt, uint8_t(atoi(optarg)));
                 break;
 
             case 's':   // -s <val> or --scroll <val>
-                setValue(port(ttyName), nextOption, uint8_t(atoi(optarg)));
+                setValue(port(ttyName), opt, uint8_t(atoi(optarg)));
                 break;
 
             case 't':   // -t <val> or --timeout <val>
-                setValue(port(ttyName), nextOption, uint16_t(atoi(optarg)));
+                setValue(port(ttyName), opt, uint16_t(atoi(optarg)));
                 break;
 
             case 'k':   // -k <file> or --keymap <file>
@@ -270,7 +285,7 @@ int main(int argc, char * const *argv)
             default:    // Something else: unexpected.
                 return 1;
         }
-    } while(nextOption != -1);
+    } while(opt != -1);
 
     close(port(ttyName));
 

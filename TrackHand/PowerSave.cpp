@@ -85,16 +85,21 @@ void PowerSave::configure()
 
 bool PowerSave::configure(const char cmd)
 {
-    if (cmd == 't')
+    switch (cmd)
     {
-        eepromSetFromSerial(cmd, timeout);
-        timeout_ = eepromGet(timeout);
-        return true;
+        case 't':
+            eepromSetFromSerial(cmd, timeout);
+            timeout_ = eepromGet(timeout);
+            return true;
+            break;
+        case 'p':
+            Serial.print("PowerSave timeout ");
+            Serial.println(timeout_);
+            return true;
+            break;
     }
-    else
-    {
-        return false;
-    }
+
+    return false;
 }
 
 
