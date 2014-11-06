@@ -16,3 +16,6 @@ build
 
 # Image files used to generate the keboard legends
 *.pnm
+
+# Utilities
+thconf
