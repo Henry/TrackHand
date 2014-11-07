@@ -127,9 +127,7 @@ void print(const int fd)
 
         if (n == -1)
         {
-            cerr<< "thconf::print: failed to receive value - "
-                << std::strerror(errno) << endl;
-            std::exit(errno);
+            return;
         }
         else
         {
@@ -139,17 +137,18 @@ void print(const int fd)
 }
 
 
-void sendCommand(const int fd, const char cmd)
+void sendCommand(const int fd, const char cmd, const char* message)
 {
     int n = write(fd, &cmd, 1);
 
     if (n < 0)
     {
-        cerr<< "thconf::sendCommand: sending " << cmd << " failed" << endl;
+        cerr<< "thconf::sendCommand: sending command '" << cmd
+            << "' failed" << endl;
     }
     else
     {
-        cout<< "thconf::sendCommand: sending " << cmd << " succeed" << endl;
+        cout<< message << endl;
     }
 }
 
@@ -246,7 +245,7 @@ int main(int argc, char * const *argv)
                 break;
 
             case 'p':   // -p or --print
-                sendCommand(port(ttyName), opt);
+                sendCommand(port(ttyName), opt, "Current configuration:");
                 print(port(ttyName));
                 break;
 
