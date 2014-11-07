@@ -2,15 +2,13 @@
 /// Title: Interface for the ADNS9800 laser sensor
 // -----------------------------------------------------------------------------
 
-#include "TrackBall.h"
-#include "ADNS9800_SROM_A6.h"
+#include "ADNS9800.h"
 #include <spi4teensy3.h>
-#include "EEPROMParameters.h"
 #include "debug.h"
 
 // -----------------------------------------------------------------------------
 
-void TrackBall::adnsBurstMotion(int16_t xy[2])
+void ADNS9800::adnsBurstMotion(int16_t xy[2])
 {
     adnsComBegin();
 
@@ -38,7 +36,7 @@ void TrackBall::adnsBurstMotion(int16_t xy[2])
 }
 
 
-uint8_t TrackBall::adnsReadReg(uint8_t reg_addr)
+uint8_t ADNS9800::adnsReadReg(uint8_t reg_addr)
 {
     adnsComBegin();
 
@@ -62,7 +60,7 @@ uint8_t TrackBall::adnsReadReg(uint8_t reg_addr)
 }
 
 
-void TrackBall::adnsWriteReg(uint8_t reg_addr, uint8_t data)
+void ADNS9800::adnsWriteReg(uint8_t reg_addr, uint8_t data)
 {
     adnsComBegin();
 
@@ -82,7 +80,7 @@ void TrackBall::adnsWriteReg(uint8_t reg_addr, uint8_t data)
 }
 
 
-void TrackBall::adnsUploadFirmware()
+void ADNS9800::adnsUploadFirmware()
 {
     // Send the firmware to the chip, cf p.18 of the datasheet
     debugln("Uploading firmware...");
@@ -111,9 +109,9 @@ void TrackBall::adnsUploadFirmware()
     delayMicroseconds(15);
 
     // Send all bytes of the firmware
-    for (int i=0; i<firmwareLength; i++)
+    for (int i=0; i<firmwareLength_; i++)
     {
-        unsigned char c = pgm_read_byte(firmwareData + i);
+        unsigned char c = pgm_read_byte(firmwareData_ + i);
         spi4teensy3::send(c);
         delayMicroseconds(15);
     }
@@ -122,43 +120,30 @@ void TrackBall::adnsUploadFirmware()
 }
 
 
-void TrackBall::configure()
+volatile bool ADNS9800::moved_ = false;
+
+
+void ADNS9800::moved()
 {
-    // Update the movement resolution and scroll-divider
-    // from the values stored in EEPROM
-    setResolution(eepromGet(resolution));
-    scrollDivider_ = eepromGet(scrollDivider);
+    ADNS9800::moved_ = true;
 }
 
 
-bool TrackBall::configure(const char cmd)
-{
-    switch (cmd)
-    {
-        case 'r':
-            eepromSetFromSerial(cmd, resolution);
-            setResolution(eepromGet(resolution));
-            return true;
-            break;
-        case 's':
-            eepromSetFromSerial(cmd, scrollDivider);
-            scrollDivider_ = eepromGet(scrollDivider);
-            return true;
-            break;
-        case 'p':
-            Serial.print("TrackBall resolution ");
-            Serial.println(eepromGet(resolution));
-            Serial.print("TrackBall scrollDivider ");
-            Serial.println(scrollDivider_);
-            return true;
-            break;
-    }
+ADNS9800::ADNS9800()
+{}
 
-    return false;
+
+void ADNS9800::begin()
+{
+    // Setup SPI pins and interrupt for optical sensor
+    pinMode(ncs_, OUTPUT);
+    pinMode(mot_, INPUT);
+    attachInterrupt(mot_, moved, FALLING);
+    wake();
 }
 
 
-void TrackBall::setResolution(const uint8_t res)
+void ADNS9800::setResolution(const uint8_t res)
 {
     digitalWrite(ncs_, LOW);
     adnsWriteReg(REG_Configuration_I, res);
@@ -166,47 +151,7 @@ void TrackBall::setResolution(const uint8_t res)
 }
 
 
-void TrackBall::resolution(const uint8_t res)
-{
-    eepromSet(resolution, res);
-    setResolution(res);
-}
-
-
-void TrackBall::scrollDivider(const uint8_t sdiv)
-{
-    eepromSet(scrollDivider, sdiv);
-    scrollDivider_ = sdiv;
-}
-
-
-volatile bool TrackBall::moved_ = false;
-
-
-void TrackBall::moved()
-{
-    TrackBall::moved_ = true;
-}
-
-
-TrackBall::TrackBall(const ptrdiff_t eepromStart)
-:
-    eepromStart_(eepromStart)
-{}
-
-
-void TrackBall::begin()
-{
-    // Setup SPI pins and interrupt for optical sensor
-    pinMode(ncs_, OUTPUT);
-    pinMode(mot_, INPUT);
-    attachInterrupt(mot_, moved, FALLING);
-
-    wake();
-}
-
-
-void TrackBall::sleep()
+void ADNS9800::sleep()
 {
     adnsWriteReg(REG_Shutdown, 0xb6);
 
@@ -218,7 +163,7 @@ void TrackBall::sleep()
 }
 
 
-void TrackBall::wake()
+void ADNS9800::wake()
 {
     // 48MHz / 24 = 2MHz = fSCLK
     spi4teensy3::init(5,1,1);
@@ -254,67 +199,7 @@ void TrackBall::wake()
 
     delay(100);
 
-    configure();
-
     debugln("ADNS-9800 Initialized");
-}
-
-
-// Clip a 16bit integer to an 8bit integer
-inline int8_t clip8(int16_t y)
-{
-    if (y > INT8_MAX) return INT8_MAX;
-    if (y < INT8_MIN) return INT8_MIN;
-    return y;
-}
-
-
-bool TrackBall::moveOrScroll(const bool moving)
-{
-    if (moved_)
-    {
-        // Reset the interrupt flag
-        moved_ = false;
-
-        // Read the ball motion from the ADNS-9800
-        int16_t xy[2];
-        adnsBurstMotion(xy);
-
-        if (moving)
-        {
-            // Clip the movement to -128 to 127 per call
-            // It would be possible to accumulate the overflow
-            // and apply subsequently but limiting the speed by clipping as
-            // is done here might be better anyway.
-            Mouse.move(clip8(-xy[1]), clip8(-xy[0]));
-        }
-        else
-        {
-            // Reset scroll counter if direction changes
-            if
-            (
-                (xy[0] > 0 && scrollCount_ > 0)
-             || (xy[0] < 0 && scrollCount_ < 0)
-            )
-            {
-                scrollCount_ = 0;
-            }
-
-            // Accumulate the scroll motion
-            scrollCount_ -= xy[0];
-
-            // Divide and clip the scroll motion before sending
-            Mouse.scroll(clip8(scrollCount_/scrollDivider_));
-
-            // Reduce the scroll count according to that sent
-            // ignoring the clipping to limit scroll-speed
-            scrollCount_ %= scrollDivider_;
-        }
-
-        return true;
-    }
-
-    return false;
 }
 
 

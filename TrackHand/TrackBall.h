@@ -1,15 +1,28 @@
+/// Copyright 2014 Henry G. Weller
 // -----------------------------------------------------------------------------
-/// Title: Interface for the ADNS9800 laser sensor
-///  Description:
-//    Class based on the Teensy interface for the ADNS-9800 provided by
-//    John Kicklighter:
-//      https://github.com/mrjohnk/ADNS-9800.git
-//      https://github.com/mrjohnk/Trackball2.git
-//    with updates for the Teensy-3.1 from
-//      https://github.com/pepijndevos/Dwergmuis
+//  This file is part of
+/// ---     TrackHand: DataHand with Laser TrackBall
+// -----------------------------------------------------------------------------
 //
-//    Added support for low-power sleep mode.
-//    Added scroll-wheel emulation mode selected by e.g. a modifier key.
+//  TrackHand is free software: you can redistribute it and/or modify it
+//  under the terms of the GNU General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+//
+//  TrackHand is distributed in the hope that it will be useful, but WITHOUT
+//  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+//  FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+//  for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  along with TrackHand.  If not, see <http://www.gnu.org/licenses/>.
+//
+// -----------------------------------------------------------------------------
+/// Title: TrackBall class using the ADNS9800 laser sensor
+///  Description:
+//    Move the pointer on interrupt
+//    or scroll if the allocated modifier key is pressed.
+//    Provides support for low-power sleep mode.
 //
 //    Both the pointer motion resolution and scroll divider are
 //    configurable by sending the new values via USB serial and stored in
@@ -20,47 +33,19 @@
 #define TrackBall_H
 
 #include "WProgram.h"
+#include "ADNS9800.h"
 
 // -----------------------------------------------------------------------------
 
 class TrackBall
+:
+    public ADNS9800
 {
-    void adnsBurstMotion(int16_t xy[2]);
-    uint8_t adnsReadReg(uint8_t reg_addr);
-    void adnsWriteReg(uint8_t reg_addr, uint8_t data);
-    void adnsUploadFirmware();
-
-    inline void adnsComBegin()
-    {
-        digitalWrite(ncs_, LOW);
-    }
-
-    inline void adnsComEnd()
-    {
-        digitalWrite(ncs_, HIGH);
-    }
-
-    //- SPI device select pin
-    const uint8_t ncs_ = SS;
-
-    //- Motion interupt pin
-    const uint8_t mot_ = 9;
-
     //- Scroll divider reduce the scroll speed relative to the pointer motion.
     uint8_t scrollDivider_;
 
     //- Current scroll counter used with scrollDivider_ to reduce scroll speed
     int16_t scrollCount_ = 0;
-
-    //- Change the resolution for movement or scroll
-    void setResolution(const uint8_t res);
-
-    //- Moved indicator has to be a static member
-    //  as it is used in...
-    static volatile bool moved_;
-
-    //- The static interrupt function indicating ball motion
-    static void moved();
 
     //- Structure representing the storage of the parameters in EEPROM
     struct parameters
@@ -82,9 +67,6 @@ public:
 
         //- Setup SPI and ADNS9800 interfaces
         void begin();
-
-        //- Sleep to save power and the laser
-        void sleep();
 
         //- Wake after sleep
         void wake();
