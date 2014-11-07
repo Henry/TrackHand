@@ -21,6 +21,7 @@
 
 #include "PowerSave.h"
 #include "EEPROMParameters.h"
+#include "initialize.h"
 #include "debug.h"
 
 // -----------------------------------------------------------------------------
@@ -78,8 +79,14 @@ void PowerSave::sleep()
 
 void PowerSave::configure()
 {
-    // timeout_ = 1200;
-    timeout_ = eepromGet(timeout);
+    if (initialize)
+    {
+        eepromSet(timeout, timeout_);
+    }
+    else
+    {
+        timeout_ = eepromGet(timeout);
+    }
 }
 
 

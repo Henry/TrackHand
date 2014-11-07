@@ -308,6 +308,14 @@
   + Compile only: =make=
   + Compile and upload: =make load=
   is sufficient.
+
+  To initialize the configuration parameters stored in EEPROM it is necessary to
+  compile and load with the =INITIALIZE=1= set on command line the first time
+  the firmware is loaded:
+  + Compile and upload: =make INITIALIZE=1 load=
+  After initialization the standard firmware may be loaded which uses the
+  current configuration stored in EEPROM:
+  + Compile and upload: =make load=
 * Dvorak Layout
   I have created a Dvorak-like layout based on the Kinesis and DataHand
   Professional II Dvorak layouts adjusted for programming convenience.

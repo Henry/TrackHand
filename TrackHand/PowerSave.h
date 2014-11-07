@@ -51,7 +51,7 @@ class PowerSave
         static TrackBall* trackBallPtr;
 
         //- Timeout (s)
-        uint16_t timeout_;
+        uint16_t timeout_ = 1200;
 
         //- Iteration time (ms)
         const uint16_t iterTime_ = 30;

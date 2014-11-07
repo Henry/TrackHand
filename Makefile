@@ -11,6 +11,10 @@
 ###-----------------------------------------------------------------------------
 PROGRAM = TrackHand
 
+# Set to 1 (INITIALIZE=1 on the make command line, compile and load
+# to initialize parameters in EEPROM.  Reset to 0 recompile and reload.
+INITIALIZE = 0
+
 # The name of your project (used to name the compiled .hex file)
 TARGET = $(PROGRAM)
 
@@ -21,7 +25,7 @@ TEENSY = 31
 TEENSY_CORE_SPEED = 48000000
 
 # configurable options
-OPTIONS = -DUSB_SERIAL_HID -DLAYOUT_US_ENGLISH
+OPTIONS = -DUSB_SERIAL_HID -DLAYOUT_US_ENGLISH -DINITIALIZE=$(INITIALIZE)
 # -DDEBUG
 
 # directory to build in
@@ -122,31 +126,36 @@ load: $(TARGET).hex
 
 upload: post_compile reboot
 
-$(BUILDDIR)/%.o: %.c
+$(BUILDDIR)/%.o: %.c Makefile
 	@echo "[CC]\t$<"
 	@mkdir -p "$(dir $@)"
 	@$(CC) $(CPPFLAGS) $(L_INC) -o "$@" -c "$<"
 
-$(BUILDDIR)/%.o: %.cpp
+$(BUILDDIR)/%.o: %.cpp Makefile
 	@echo "[CXX]\t$<"
 	@mkdir -p "$(dir $@)"
 	@$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(L_INC) -o "$@" -c "$<"
 
-$(TARGET).elf: $(OBJS) $(LDSCRIPT)
+$(TARGET).elf: $(OBJS) $(LDSCRIPT) Makefile
 	@echo "[LD]\t$@"
 	@$(CC) $(LDFLAGS) -o "$@" $(OBJS) $(LIBS)
 
-%.hex: %.elf
+%.hex: %.elf Makefile
 	@echo "[HEX]\t$@"
 	@$(SIZE) "$<"
 	@$(OBJCOPY) -O ihex -R .eeprom "$<" "$@"
 
-thconf: utilities/thconf.cpp
+thconf: utilities/thconf.cpp Makefile
 	@echo "[CXX]\t$<"
 	@g++ $(CXXFLAGS) -o "$@" "$<"
 
-# compiler generated dependency info
+# Compiler generated dependency info
 -include $(OBJS:.o=.d)
+
+# Update the initialize.h according to the INITIALIZE option
+ifeq ($(shell grep $(INITIALIZE) $(PROGRAM)/initialize.h), )
+    $(shell sed -i s/[01]/$(INITIALIZE)/ $(PROGRAM)/initialize.h)
+endif
 
 clean:
 	@echo Cleaning...

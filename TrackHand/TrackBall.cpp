@@ -22,16 +22,27 @@
 #include "TrackBall.h"
 #include <spi4teensy3.h>
 #include "EEPROMParameters.h"
+#include "initialize.h"
 #include "debug.h"
 
 // -----------------------------------------------------------------------------
 
 void TrackBall::configure()
 {
-    // Update the movement resolution and scroll-divider
-    // from the values stored in EEPROM
-    setResolution(eepromGet(resolution));
-    scrollDivider_ = eepromGet(scrollDivider);
+    if (initialize)
+    {
+        eepromSet(resolution, resolution_);
+        eepromSet(scrollDivider, scrollDivider_);
+    }
+    else
+    {
+        // Update the movement resolution and scroll-divider
+        // from the values stored in EEPROM
+        resolution_ = eepromGet(resolution);
+        scrollDivider_ = eepromGet(scrollDivider);
+    }
+
+    setResolution(resolution_);
 }
 
 
@@ -41,7 +52,8 @@ bool TrackBall::configure(const char cmd)
     {
         case 'r':
             eepromSetFromSerial(cmd, resolution);
-            setResolution(eepromGet(resolution));
+            resolution_ = eepromGet(resolution);
+            setResolution(resolution_);
             return true;
             break;
         case 's':
@@ -64,15 +76,16 @@ bool TrackBall::configure(const char cmd)
 
 void TrackBall::resolution(const uint8_t res)
 {
-    eepromSet(resolution, res);
-    setResolution(res);
+    resolution_ = res;
+    eepromSet(resolution, resolution_);
+    setResolution(resolution_);
 }
 
 
 void TrackBall::scrollDivider(const uint8_t sdiv)
 {
-    eepromSet(scrollDivider, sdiv);
     scrollDivider_ = sdiv;
+    eepromSet(scrollDivider, scrollDivider_);
 }
 
 

@@ -41,8 +41,11 @@ class TrackBall
 :
     public ADNS9800
 {
+    //- Resolution of the pointer motion in units of 50cpi
+    uint8_t resolution_ = 10;
+
     //- Scroll divider reduce the scroll speed relative to the pointer motion.
-    uint8_t scrollDivider_;
+    uint8_t scrollDivider_ = 50;
 
     //- Current scroll counter used with scrollDivider_ to reduce scroll speed
     int16_t scrollCount_ = 0;
