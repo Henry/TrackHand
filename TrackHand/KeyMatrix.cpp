@@ -404,6 +404,8 @@ void KeyMatrix::wake()
     Keyboard.set_modifier(MODIFIERKEY_SHIFT);
     Keyboard.send_now();
 
+    delay(100);
+
     // Rest the modifiers
     Keyboard.set_modifier(0);
     Keyboard.send_now();
