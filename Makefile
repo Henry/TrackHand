@@ -15,9 +15,6 @@ PROGRAM = TrackHand
 # to initialize parameters in EEPROM.  Reset to 0 recompile and reload.
 INITIALIZE = 0
 
-# The name of your project (used to name the compiled .hex file)
-TARGET = $(PROGRAM)
-
 # The teensy version to use, 30 or 31
 TEENSY = 31
 
@@ -110,19 +107,19 @@ OBJS := $(foreach src,$(SOURCES), $(BUILDDIR)/$(src))
 
 all: hex thconf
 
-build: $(TARGET).elf
+build: $(PROGRAM).elf
 
-hex: $(TARGET).hex
+hex: $(PROGRAM).hex
 
-post_compile: $(TARGET).hex
+post_compile: $(PROGRAM).hex
 	@$(abspath $(TOOLSPATH))/teensy_post_compile -file="$(basename $<)" \
 	-path=$(CURDIR) -tools="$(abspath $(TOOLSPATH))"
 
 reboot:
 	@-$(abspath $(TOOLSPATH))/teensy_reboot
 
-load: $(TARGET).hex
-	teensy_loader_cli -mmcu=$(TEENSY_MC) -w $(TARGET).hex
+load: $(PROGRAM).hex
+	teensy_loader_cli -mmcu=$(TEENSY_MC) -w $(PROGRAM).hex
 
 upload: post_compile reboot
 
@@ -136,7 +133,7 @@ $(BUILDDIR)/%.o: %.cpp Makefile
 	@mkdir -p "$(dir $@)"
 	@$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(L_INC) -o "$@" -c "$<"
 
-$(TARGET).elf: $(OBJS) $(LDSCRIPT) Makefile
+$(PROGRAM).elf: $(OBJS) $(LDSCRIPT) Makefile
 	@echo "[LD]\t$@"
 	@$(CC) $(LDFLAGS) -o "$@" $(OBJS) $(LIBS)
 
@@ -160,6 +157,6 @@ endif
 clean:
 	@echo Cleaning...
 	@rm -rf "$(BUILDDIR)"
-	@rm -f "$(TARGET).elf" "$(TARGET).hex" thconf
+	@rm -f "$(PROGRAM).elf" "$(PROGRAM).hex" thconf
 
 ###-----------------------------------------------------------------------------

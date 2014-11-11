@@ -34,15 +34,19 @@
   [[https://github.com/Henry/TrackHand/raw/master/Images/InsideRight.jpg]]
 * Teensy 3 Software
   The [[https://www.pjrc.com/teensy/teensy31.html][Teensy-3.1]] micro-controller
-  is used in this project.  Any of the Teensy boards could be used but I wanted
-  to play around with this latest and most powerful offering from PJRC and the
-  price is very reasonable.  The installation notes are really for my own
-  reference but they may be useful to others.  I am developing software under
-  OpenSuSE but all these tools are available for other GNU/Linux distributions.
+  is used in this project.  Any of the Teensy
+  boards could be used but I wanted to play around with this latest and most
+  powerful offering from PJRC and the price is very reasonable.  The
+  installation notes are really for my own reference but they may be useful to
+  others.  I am developing software under OpenSuSE but all these tools are
+  available for other GNU/Linux distributions.
 *** Install AVR tools on OpenSuSE
     Open /firefox/ and follow instructions on
     + http://software.opensuse.org/package/cross-avr-gcc
     + Use the 1-click install of /CrossToolchain:avr/
+    Or add the repository and use =zypper=
+    + sudo zypper addrepo http://download.opensuse.org/repositories/CrossToolchain:/avr/openSUSE_13.1/
+    + =zypper in cross-avr-gcc avr-libc cross-avr-binutils=
 *** Enable serial (based on notes from PJRC)
     The udev rule file gives non-root users permission to use the Teensy device.
     Download [[http://www.pjrc.com/teensy/49-teensy.rules][49-teensy.rules]]
