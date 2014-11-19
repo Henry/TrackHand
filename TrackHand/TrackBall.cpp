@@ -106,6 +106,14 @@ void TrackBall::wake()
 {
     ADNS9800::wake();
     configure();
+
+    // Wait for the ADNS9800 to wake
+    delay(1000);
+
+    // "Wiggle" the pointer a little to wake the screen
+    Mouse.move(1, 0);
+    delay(100);
+    Mouse.move(-1, 0);
 }
 
 

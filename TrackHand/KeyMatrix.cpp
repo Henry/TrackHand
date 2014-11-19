@@ -390,25 +390,6 @@ void KeyMatrix::sleep()
 void KeyMatrix::wake()
 {
     currentMode_->wake();
-
-    // Wait for the keyboard to wake
-    delay(1000);
-
-    // Rested the USB buffer
-    for (uint8_t keyi=0; keyi<maxSend_; keyi++)
-    {
-        keyboard_keys[keyi] = 0;
-    }
-
-    // Send a shift to wake-up the screen
-    Keyboard.set_modifier(MODIFIERKEY_SHIFT);
-    Keyboard.send_now();
-
-    delay(100);
-
-    // Rest the modifiers
-    Keyboard.set_modifier(0);
-    Keyboard.send_now();
 }
 
 
